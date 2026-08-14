@@ -1,0 +1,27 @@
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.header-spacer {
+  flex: 1 1 auto;
+}
+
+.header-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.header-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: var(--mat-sys-level2);
+}
+
+.header-button {
+  --mat-button-text-label-text-weight: 500;
+}

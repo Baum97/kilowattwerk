@@ -1,0 +1,35 @@
+<mat-toolbar class="header-toolbar">
+  <span class="header-title"><a routerLink="/" class="header-link">reNewLy</a></span>
+
+  <span class="header-spacer"></span>
+
+  <button matButton class="header-button" [matMenuTriggerFor]="solarMenu">Solar</button>
+  <mat-menu #solarMenu="matMenu">
+    <a mat-menu-item routerLink="/solar" routerLinkActive="active-link">Solar Page</a>
+    <a mat-menu-item routerLink="/">Zur Card View</a>
+  </mat-menu>
+
+  <button matButton class="header-button" [matMenuTriggerFor]="windMenu">Wind</button>
+  <mat-menu #windMenu="matMenu">
+    <a mat-menu-item routerLink="/wind" routerLinkActive="active-link">Wind Page</a>
+    <a mat-menu-item routerLink="/">Zur Card View</a>
+  </mat-menu>
+
+  <button matButton class="header-button" [matMenuTriggerFor]="fossilMenu">Fossil</button>
+  <mat-menu #fossilMenu="matMenu">
+    <a mat-menu-item routerLink="/fossil" routerLinkActive="active-link">Fossil Page</a>
+    <a mat-menu-item routerLink="/">Zur Card View</a>
+  </mat-menu>
+  
+  <a mat-button class="header-button">About</a>
+
+  <button
+    mat-icon-button
+    class="header-button"
+    type="button"
+    [attr.aria-label]="theme.isDark() ? 'Zu hellem Design wechseln' : 'Zu dunklem Design wechseln'"
+    (click)="theme.toggle()"
+  >
+    <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+</mat-toolbar>

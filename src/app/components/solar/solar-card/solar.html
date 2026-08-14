@@ -1,0 +1,44 @@
+<mat-card class="solar-card" appearance="outlined">
+  <button
+    matIconButton
+    class="solar-card__add"
+    [class.solar-card__add--open]="menuOpen()"
+    type="button"
+    [attr.aria-label]="menuOpen() ? 'Menü schließen' : 'Solaranlage hinzufügen'"
+    [attr.aria-expanded]="menuOpen()"
+    aria-controls="solar-menu"
+    (click)="toggleMenu()"
+  >
+    <mat-icon>{{ menuOpen() ? 'close' : 'add' }}</mat-icon>
+  </button>
+
+  <mat-card-header class="solar-card__header">
+    <div mat-card-avatar class="solar-card__avatar">
+      <mat-icon>solar_power</mat-icon>
+    </div>
+    <mat-card-title>Solar</mat-card-title>
+    <mat-card-subtitle>Aktuelle Erzeugung</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content class="solar-card__content">
+    <p class="solar-card__value">
+      12,4 <span class="solar-card__unit">kW</span>
+    </p>
+    <dl class="solar-card__stats">
+      <div class="solar-card__stat">
+        <dt>Heute</dt>
+        <dd>48,2 kWh</dd>
+      </div>
+      <div class="solar-card__stat">
+        <dt>Anlagen</dt>
+        <dd>3</dd>
+      </div>
+    </dl>
+
+    @if (menuOpen()) {
+      <div id="solar-menu" class="solar-card__menu">
+        <app-solar-menu />
+      </div>
+    }
+  </mat-card-content>
+</mat-card>
