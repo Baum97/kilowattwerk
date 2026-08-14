@@ -1,8 +1,44 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Solar</mat-card-title>
+<mat-card class="wind-card" appearance="outlined">
+  <button
+    matIconButton
+    class="wind-card__add"
+    [class.wind-card__add--open]="menuOpen()"
+    type="button"
+    [attr.aria-label]="menuOpen() ? 'Menü schließen' : 'Windanlage hinzufügen'"
+    [attr.aria-expanded]="menuOpen()"
+    aria-controls="wind-menu"
+    (click)="toggleMenu()"
+  >
+    <mat-icon>{{ menuOpen() ? 'close' : 'add' }}</mat-icon>
+  </button>
+
+  <mat-card-header class="wind-card__header">
+    <div mat-card-avatar class="wind-card__avatar">
+      <mat-icon>wind_power</mat-icon>
+    </div>
+    <mat-card-title>Wind</mat-card-title>
+    <mat-card-subtitle>Aktuelle Erzeugung</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
-    <p>This is the Solar page.</p>
+
+  <mat-card-content class="wind-card__content">
+    <p class="wind-card__value">
+      27,8 <span class="wind-card__unit">kW</span>
+    </p>
+    <dl class="wind-card__stats">
+      <div class="wind-card__stat">
+        <dt>Heute</dt>
+        <dd>112,5 kWh</dd>
+      </div>
+      <div class="wind-card__stat">
+        <dt>Anlagen</dt>
+        <dd>2</dd>
+      </div>
+    </dl>
+
+    @if (menuOpen()) {
+      <div id="wind-service" class="wind-card__service">
+        <app-wind-service />
+      </div>
+    }
   </mat-card-content>
 </mat-card>

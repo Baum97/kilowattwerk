@@ -1,0 +1,117 @@
+.wind-card {
+  margin: 16px;
+  position: relative;
+  max-width: 100vw;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.wind-card:hover {
+  box-shadow: var(--mat-sys-level2);
+}
+
+.wind-card__add {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+/* Sichtbar bei Hover, bei Tastaturfokus - und dauerhaft, solange offen. */
+.wind-card:hover .wind-card__add,
+.wind-card:focus-within .wind-card__add,
+.wind-card__add--open {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Im Toggle-Zustand "offen": rotes X als Schliessen-Signal. */
+.wind-card__add--open {
+  --mat-icon-button-icon-color: var(--mat-sys-error);
+  --mat-icon-button-state-layer-color: var(--mat-sys-error);
+}
+
+.wind-card__add mat-icon {
+  transition: transform 150ms ease;
+}
+
+.wind-card__add--open mat-icon {
+  transform: rotate(90deg);
+}
+
+/* Touch-Geraete kennen kein Hover - dort dauerhaft zeigen. */
+@media (hover: none) {
+  .wind-card__add {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wind-card,
+  .wind-card__add,
+  .wind-card__add mat-icon {
+    transition: none;
+  }
+
+  .wind-card:hover {
+    transform: none;
+  }
+}
+
+.wind-card__header {
+  padding-right: 48px;
+}
+
+.wind-card__avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.wind-card__content {
+  padding-top: 8px;
+}
+
+.wind-card__value {
+  margin: 0 0 16px;
+  font: var(--mat-sys-display-small);
+  line-height: 1.1;
+  color: var(--mat-sys-on-surface);
+}
+
+.wind-card__unit {
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.wind-card__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.wind-card__stat dt {
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.wind-card__stat dd {
+  margin: 2px 0 0;
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+.wind-card__menu {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
