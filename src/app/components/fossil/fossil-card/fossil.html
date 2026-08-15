@@ -22,8 +22,9 @@
 
   <mat-card-content class="fossil-card__content">
     <p class="fossil-card__value">
-      64,1 <span class="fossil-card__unit">kW</span>
+      {{ fossil.totalPowerKw() | number: '1.1-1' }} <span class="fossil-card__unit">kW</span>
     </p>
+
     <dl class="fossil-card__stats">
       <div class="fossil-card__stat">
         <dt>Heute</dt>
@@ -31,13 +32,19 @@
       </div>
       <div class="fossil-card__stat">
         <dt>Anlagen</dt>
-        <dd>1</dd>
+        <dd>{{ fossil.count() }}</dd>
       </div>
     </dl>
 
     @if (menuOpen()) {
-      <div id="fossil-service" class="fossil-card__service">
-        <app-fossil-service />
+      <div id="fossil-menu" class="fossil-card__menu">
+        <mat-chip-set class="fossil-card__chips" aria-label="Kraftwerke">
+          @for (plant of fossil.plants(); track plant.id) {
+            <mat-chip>{{ plant.name }} · {{ plant.powerKw | number: '1.1-1' }} kW</mat-chip>
+          } @empty {
+            <span class="fossil-card__empty">Noch kein Kraftwerk angelegt.</span>
+          }
+        </mat-chip-set>
       </div>
     }
   </mat-card-content>

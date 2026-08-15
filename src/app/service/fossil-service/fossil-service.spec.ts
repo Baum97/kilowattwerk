@@ -1,23 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { FossilService } from './fossil-service';
 
 describe('FossilService', () => {
-  let component: FossilService;
-  let fixture: ComponentFixture<FossilService>;
+  let service: FossilService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [FossilService]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(FossilService);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(FossilService);
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(service).toBeTruthy();
+  });
+
+  it('should track plants as state', () => {
+    const before = service.count();
+    service.add({ id: 'test', name: 'Test', powerKw: 1 });
+    expect(service.count()).toBe(before + 1);
+
+    service.remove('test');
+    expect(service.count()).toBe(before);
   });
 });

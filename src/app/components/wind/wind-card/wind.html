@@ -22,8 +22,11 @@
 
   <mat-card-content class="wind-card__content">
     <p class="wind-card__value">
-      27,8 <span class="wind-card__unit">kW</span>
+      {{ wind.totalPowerKw() | number: '1.1-1' }} <span class="wind-card__unit">kW</span>
     </p>
+
+
+
     <dl class="wind-card__stats">
       <div class="wind-card__stat">
         <dt>Heute</dt>
@@ -31,13 +34,19 @@
       </div>
       <div class="wind-card__stat">
         <dt>Anlagen</dt>
-        <dd>2</dd>
+        <dd>{{ wind.count() }}</dd>
       </div>
     </dl>
 
     @if (menuOpen()) {
-      <div id="wind-service" class="wind-card__service">
-        <app-wind-service />
+      <div id="wind-menu" class="wind-card__menu">
+        <mat-chip-set class="wind-card__chips" aria-label="Windanlagen">
+          @for (plant of wind.plants(); track plant.id) {
+            <mat-chip>{{ plant.name }} · {{ plant.powerKw | number: '1.1-1' }} kW</mat-chip>
+          } @empty {
+            <span class="wind-card__empty">Noch keine Anlage angelegt.</span>
+          }
+        </mat-chip-set>
       </div>
     }
   </mat-card-content>

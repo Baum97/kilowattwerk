@@ -1,23 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { SolarService } from './solar-service';
 
 describe('SolarService', () => {
-  let component: SolarService;
-  let fixture: ComponentFixture<SolarService>;
+  let service: SolarService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [SolarService]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(SolarService);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(SolarService);
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(service).toBeTruthy();
+  });
+
+  it('should track plants as state', () => {
+    const before = service.count();
+    service.add({ id: 'test', name: 'Test', powerKw: 1 });
+    expect(service.count()).toBe(before + 1);
+
+    service.remove('test');
+    expect(service.count()).toBe(before);
   });
 });

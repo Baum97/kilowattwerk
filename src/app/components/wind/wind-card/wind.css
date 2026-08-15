@@ -90,6 +90,15 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.wind-card__chips {
+  margin-bottom: 16px;
+}
+
+.wind-card__empty {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
 .wind-card__stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
