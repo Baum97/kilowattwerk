@@ -47,7 +47,7 @@ export class SolarService {
   }
 
   getGermanyPower(): Observable<any> {
-    return this.http.get<any>('https://api.energy-charts.info/#/power%20v2/handler_v2_public_power_get')
+    return this.http.get<any>('https://api.energy-charts.info/public_power', { params: { country: 'DE' } })
     .pipe(
       catchError(this.handleError)
     );
