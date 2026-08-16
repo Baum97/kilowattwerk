@@ -8,6 +8,7 @@ export interface SolarPlant {
   name: string;
   location?: string;
   energy_kwh?: number;
+  totalPowerKw?: number;
   time?: number;
   call?: number;
 }
