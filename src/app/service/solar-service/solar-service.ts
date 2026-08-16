@@ -1,20 +1,23 @@
 import { Injectable, computed, signal } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 
 export interface SolarPlant {
   id: string;
   name: string;
   location?: string;
-  power: number;
-  time: number;
-  call: number;
+  energy_kwh?: number;
+  time?: number;
+  call?: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class SolarService {
   private readonly _plants = signal<SolarPlant[]>([
-    { id: 'euro-per-kwh-over-time', name: 'Euro/kWh/Zeit', call: this.euroPerKwHOverTimeAPI()},
-    { id: 'current-kwh-per-year', name: 'Aktuell kWh/Jahr', call: this.currentkWhPerYearAPI()},
-    { id: 'annual-increase-kwh', name: 'Jährliche Steigerung kWh', call: this.annualIncreaseKWhAPI()},
+    { id: 'euro-per-kwh-over-time', name: 'Euro/kWh/Zeit'},
+    { id: 'current-kwh-per-year', name: 'Aktuell kWh/Jahr'},
+    { id: 'annual-increase-kwh', name: 'Jährliche Steigerung kWh'},
   ]);
 
   readonly plants = this._plants.asReadonly();
@@ -22,7 +25,7 @@ export class SolarService {
   readonly count = computed(() => this._plants().length);
 
   readonly totalPowerKw = computed(() =>
-    this._plants().reduce((sum, plant) => sum + plant.call, 0)
+    this._plants().reduce(() => 0, 0)
   );
 
   add(plant: SolarPlant): void {
@@ -34,11 +37,20 @@ export class SolarService {
   }
 
 
+  constructor(private http: HttpClient) {}
+
 
   // API Methods
-  euroPerKwHOverTimeAPI(): number {
-    console.debug("euroPerKwHOverTimeAPI called");
+  publicPower() {
+    console.debug("publicPowerAPI called");
     return 0.35;
+  }
+
+  getGermanyPower(): Observable<any> {
+    return this.http.get<any>('https://api.energy-charts.info/#/power%20v2/handler_v2_public_power_get')
+    .pipe(
+      catchError(this.handleError)
+    );
   }
 
   currentkWhPerYearAPI(): number {
@@ -49,5 +61,10 @@ export class SolarService {
   annualIncreaseKWhAPI(): number { 
     console.debug("annualIncreaseKWhAPI called");
     return 50;
+  }
+
+
+  private handleError(error: HttpErrorResponse) {
+    return throwError(() => new Error(`An error occurred: ${error.message}`));
   }
 }
