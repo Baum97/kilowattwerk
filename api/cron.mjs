@@ -13,10 +13,7 @@ export default async function handler(req, res) {
     return res.status(401).end('Unauthorized');
   }
 
-<<<<<<< Updated upstream
-=======
   // ab Mitternacht (UTC) des Vortags, damit der Vortag vollstaendig aggregierbar ist
->>>>>>> Stashed changes
   const end = new Date();
   const start = new Date(Date.UTC(
     end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate() - 1
@@ -48,9 +45,6 @@ export default async function handler(req, res) {
     .from('generation')
     .upsert(rows, { onConflict: 'ts,technology' });
 
-<<<<<<< Updated upstream
-  if (error) return res.status(500).json({ error: error.message });
-=======
   if (rawError) return fail(res, 'generation upsert', rawError, rows[0]);
 
   const dailyRows = aggregateDaily(rows);
@@ -93,7 +87,6 @@ function aggregateDaily(rows) {
     if (row.value_mw > bucket.max) bucket.max = row.value_mw;
     if (row.value_mw < bucket.min) bucket.min = row.value_mw;
   }
->>>>>>> Stashed changes
 
   return [...buckets.values()].map(bucket => {
     const avg = bucket.sum / bucket.n;
