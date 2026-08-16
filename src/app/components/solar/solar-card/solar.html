@@ -42,9 +42,9 @@
       <div id="solar-menu" class="solar-card__menu">
         <mat-chip-set class="solar-card__chips" aria-label="Solaranlagen">
           @for (plant of solar.plants(); track plant.id) {
-            <mat-chip-option>{{ plant.name }} · {{ plant.call | number: '1.1-1' }} </mat-chip-option>
+            <mat-chip-option>{{ plant.name }} · {{ plant.totalPowerKw | number: '1.1-1' }}</mat-chip-option>
           } @empty {
-            <span class="solar-card__empty">Noch keine Anlage angelegt.</span>
+            <span class="solar-card__empty">Kein zusätzlichen Views verfügbar.</span>
           }
         </mat-chip-set>      
       </div>
