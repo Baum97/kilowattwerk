@@ -11,6 +11,11 @@ export default async function handler(req, res) {
     return res.status(401).end('Unauthorized');
   }
 
+  console.log('env present', {
+    url: !!process.env.SUPABASE_URL,
+    key: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+  });
+
   const end = new Date();
   const start = new Date(end.getTime() - 24 * 60 * 60 * 1000);
 
@@ -40,7 +45,16 @@ export default async function handler(req, res) {
     .from('generation')
     .upsert(rows, { onConflict: 'ts,technology' });
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error('supabase upsert failed', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      sample: rows[0],
+    });
+    return res.status(500).json({ error: error.message, code: error.code });
+  }
 
   return res.status(200).json({ inserted: rows.length });
 }
