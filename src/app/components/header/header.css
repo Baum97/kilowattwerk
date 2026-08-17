@@ -3,11 +3,20 @@
   font-weight: 500;
 }
 
+.header-logo {
+  height: 0.8em;
+  width: auto;
+  display: block;
+}
+
 .header-spacer {
   flex: 1 1 auto;
 }
 
 .header-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   text-decoration: none;
   color: inherit;
 }

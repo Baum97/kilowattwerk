@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "reNewLy": {
+    "KilowattWerk": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -57,10 +57,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "reNewLy:build:production"
+              "buildTarget": "KilowattWerk:build:production"
             },
             "development": {
-              "buildTarget": "reNewLy:build:development"
+              "buildTarget": "KilowattWerk:build:development"
             }
           },
           "defaultConfiguration": "development"

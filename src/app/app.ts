@@ -12,5 +12,5 @@ import { Fossil } from './components/fossil/fossil-card/fossil';
   styleUrl: './app.css'
 })
 export class App {
-  protected title = 'reNewLy';
+  protected title = 'KilowattWerk';
 }

@@ -1,6 +1,6 @@
 # Kommerzielle Lizenz
 
-reNewLy steht unter der [PolyForm Noncommercial License 1.0.0](LICENSE). Diese
+KilowattWerk steht unter der [PolyForm Noncommercial License 1.0.0](LICENSE). Diese
 deckt ausschließlich nicht-kommerzielle Nutzung ab.
 
 Jede kommerzielle Nutzung — Verkauf, entgeltlicher oder werbefinanzierter
@@ -11,7 +11,7 @@ gesonderte kommerzielle Lizenz.
 
 **Gewinnbeteiligung — immer.**
 Jede kommerzielle Lizenz beinhaltet eine prozentuale Beteiligung am Gewinn,
-der mit dem Produkt oder Dienst erzielt wird, in das reNewLy einfließt.
+der mit dem Produkt oder Dienst erzielt wird, in das KilowattWerk einfließt.
 Der Prozentsatz wird pro Lizenz vereinbart und quartalsweise abgerechnet.
 
 **Monatliche Kosten — je nach Bedarf.**
@@ -22,7 +22,7 @@ vereinbarten Leistungsumfang:
 - Weiterentwicklung und Anpassungen
 - Wartung und Support
 
-Wer reNewLy rein selbst betreibt und keine dieser Leistungen bezieht, zahlt
+Wer KilowattWerk rein selbst betreibt und keine dieser Leistungen bezieht, zahlt
 keine Monatsgebühr — die Gewinnbeteiligung bleibt davon unberührt.
 
 ## Namensnennung
@@ -30,8 +30,8 @@ keine Monatsgebühr — die Gewinnbeteiligung bleibt davon unberührt.
 Auch mit kommerzieller Lizenz bleibt die Nennung des Urhebers verpflichtend,
 sichtbar in Dokumentation und Anwendung:
 
-> Basiert auf reNewLy von Andreas Baumgaertner
-> (https://github.com/BackendChestDev/reNewLy)
+> Basiert auf KilowattWerk von Andreas Baumgaertner
+> (https://github.com/BackendChestDev/KilowattWerk)
 
 ## Kontakt
 

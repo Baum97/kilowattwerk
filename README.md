@@ -2,7 +2,7 @@
 
 For any and commercial use, consult LICENSE and COMMERCIAL.md
 
-# ReNewLy
+# KilowattWerk
 
 
 ## Development server

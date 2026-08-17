@@ -2,7 +2,7 @@ import { DOCUMENT, Injectable, computed, effect, inject, signal } from '@angular
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
-const STORAGE_KEY = 'renewly-theme';
+const STORAGE_KEY = 'KilowattWerk-theme';
 const DARK_QUERY = '(prefers-color-scheme: dark)';
 
 @Injectable({ providedIn: 'root' })
