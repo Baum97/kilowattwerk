@@ -22,27 +22,27 @@
 
   <mat-card-content class="solar-card__content">
     <p class="solar-card__value">
-      {{ solar.totalPowerKw() | number: '1.1-1' }} <span class="solar-card__unit">kW</span>
+      {{ generation.currentMw('solar') | number: '1.0-0' }} <span class="solar-card__unit">MW</span>
     </p>
 
 
 
     <dl class="solar-card__stats">
       <div class="solar-card__stat">
-        <dt>Heute</dt>
-        <dd>48,2 kWh</dd>
+        <dt>Stand</dt>
+        <dd>{{ generation.updatedAt() | date: 'HH:mm' }}</dd>
       </div>
       <div class="solar-card__stat">
-        <dt>Anlagen</dt>
-        <dd>{{ solar.count() }}</dd>
+        <dt>Technologien</dt>
+        <dd>{{ generation.count('solar') }}</dd>
       </div>
     </dl>
 
     @if (menuOpen()) {
       <div id="solar-menu" class="solar-card__menu">
         <mat-chip-set class="solar-card__chips" aria-label="Solaranlagen">
-          @for (plant of solar.plants(); track plant.id) {
-            <mat-chip-option>{{ plant.name }} · {{ plant.totalPowerKw | number: '1.1-1' }}</mat-chip-option>
+          @for (tech of generation.breakdown('solar'); track tech.id) {
+            <mat-chip>{{ tech.name }} · {{ tech.mw | number: '1.0-0' }} MW</mat-chip>
           } @empty {
             <span class="solar-card__empty">Kein zusätzlichen Views verfügbar.</span>
           }
