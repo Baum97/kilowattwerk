@@ -1,4 +1,3 @@
-
 const REFRESH_SECONDS = 60;
 
 export default async function handler(req, res) {
@@ -19,13 +18,13 @@ export default async function handler(req, res) {
 
     const { time, production_types } = await upstream.json();
     
-    const values = {};
+    const maxPowerCapacity = {};
     for (const type of production_types) {
         let data_length = type.data.length;
         while (type.data[data_length] == null) {
             data_length -=1;
         }
-        values[type.name] = type.data[data_length];
+        values[type.name] = {year: time[data_length], gw: type.data[data_length]};
     }
 
     res.setHeader(
@@ -34,6 +33,6 @@ export default async function handler(req, res) {
   );
 
   return res.status(200).json({
-    values
+    maxPowerCapacity
   });
 }
