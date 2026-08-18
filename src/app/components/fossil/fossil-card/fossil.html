@@ -22,28 +22,36 @@
 
   <mat-card-content class="fossil-card__content">
     <p class="fossil-card__value">
-      {{ fossil.totalPowerKw() | number: '1.1-1' }} <span class="fossil-card__unit">kW</span>
+      {{ generation.currentMw('fossil') | number: '1.0-0' }} <span class="fossil-card__unit">MW</span>
     </p>
 
     <dl class="fossil-card__stats">
       <div class="fossil-card__stat">
-        <dt>Heute</dt>
-        <dd>389,7 kWh</dd>
+        <dt>Stand</dt>
+        <dd>{{ generation.updatedAt() | date: 'HH:mm' }}</dd>
       </div>
       <div class="fossil-card__stat">
-        <dt>Anlagen</dt>
-        <dd>{{ fossil.count() }}</dd>
+        <dt>Technologien</dt>
+        <dd>{{ generation.count('fossil') }}</dd>
       </div>
     </dl>
 
+    <div id="fossil-menu" class="fossil-card__menu">
+      <mat-chip-set class="fossil-card__chips" aria-label="Kraftwerke">
+        @for (tech of generation.breakdown('fossil'); track tech.id) {
+          <mat-chip>{{ tech.name }} · {{ tech.mw | number: '1.0-0' }} MW</mat-chip>
+        } @empty {
+          <span class="fossil-card__empty">Noch kein Kraftwerk angelegt.</span>
+        }
+      </mat-chip-set>
+    </div>
+
     @if (menuOpen()) {
       <div id="fossil-menu" class="fossil-card__menu">
+      <p>Graphen Auswahl:</p>
+
         <mat-chip-set class="fossil-card__chips" aria-label="Kraftwerke">
-          @for (plant of fossil.plants(); track plant.id) {
-            <mat-chip>{{ plant.name }} · {{ plant.powerKw | number: '1.1-1' }} kW</mat-chip>
-          } @empty {
-            <span class="fossil-card__empty">Noch kein Kraftwerk angelegt.</span>
-          }
+          <span class="fossil-card__empty">Noch kein Graphen bereitgestellt.</span>
         </mat-chip-set>
       </div>
     }

@@ -6,7 +6,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const RETENTION_DAYS = 180;
+const RETENTION_DAYS = 365;
 
 export default async function handler(req, res) {
   const cronSecret = process.env.CRON_SECRET;
