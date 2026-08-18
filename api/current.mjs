@@ -5,7 +5,7 @@
  */
 
 const WINDOW_HOURS = 6;
-const REFRESH_SECONDS = 15 * 60;
+const REFRESH_SECONDS = 60;
 
 export default async function handler(req, res) {
   const end = new Date();
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
 
   res.setHeader(
     'Cache-Control',
-    `s-maxage=${REFRESH_SECONDS}, stale-while-revalidate=${REFRESH_SECONDS}`
+    `s-maxage=${REFRESH_SECONDS * 15}, stale-while-revalidate=${REFRESH_SECONDS}`
   );
 
   return res.status(200).json({
