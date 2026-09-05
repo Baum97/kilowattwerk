@@ -49,7 +49,7 @@
         <dd>{{ generation.updatedAt() | date: 'HH:mm' }}</dd>
       </div>
       <div class="wind-card__stat">
-        <dt>Technologien</dt>
+        <dt>Erzeugertechnologien</dt>
         <dd>{{ generation.count('wind') }}</dd>
       </div>
     </dl>
@@ -66,7 +66,7 @@
 
     @if (menuOpen()) {
       <div id="wind-menu" class="wind-card__menu">
-        <mat-chip-set class="wind-card__chips" aria-label="Windanlagen">s
+        <mat-chip-set class="wind-card__chips" aria-label="Windanlagen">
           <span class="wind-card__empty">Noch keine Graphen bereitgestellt.</span>
         </mat-chip-set>
       </div>

@@ -1,5 +1,5 @@
 import { Component, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,6 +25,7 @@ export class Contact {
   protected readonly errorMessage = signal<string | null>(null);
 
   private readonly section = viewChild<ElementRef<HTMLElement>>('section');
+  private readonly formDirective = viewChild(FormGroupDirective);
 
   constructor() {
     // Der Bereich liegt ueber dem Footer: beim Aufklappen waechst die Seite an
@@ -65,7 +66,11 @@ export class Contact {
       // bewusst fetch-aehnlich ueber HttpClient: BotID haengt seine Header an
       // jeden POST auf /api/contact, unabhaengig vom verwendeten Client
       await firstValueFrom(this.http.post('/api/contact', this.form.getRawValue()));
-      this.form.reset();
+
+      // resetForm() statt form.reset(): nur die Direktive setzt auch ihr
+      // `submitted` zurueck. Material leitet den Fehlerzustand daraus mit ab -
+      // sonst stehen die wieder leeren Pflichtfelder nach dem Senden alle rot.
+      this.formDirective()?.resetForm();
       this.state.set('sent');
     } catch (error: unknown) {
       const message = (error as { error?: { error?: string } })?.error?.error;

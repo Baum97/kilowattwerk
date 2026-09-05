@@ -12,8 +12,7 @@ const MAX_EMAIL = 254;
 const MAX_MESSAGE = 5000;
 
 export async function POST(request) {
-  const verification = await checkBotId();
-  if (verification.isBot) {
+  if (await isBot()) {
     return Response.json({ error: 'Zugriff verweigert.' }, { status: 403 });
   }
 
@@ -67,6 +66,21 @@ export async function POST(request) {
   }
 
   return Response.json({ id: data?.id ?? null }, { status: 200 });
+}
+
+/**
+ * BotID-Pruefung. Faellt die Pruefung selbst aus, entscheidet die Umgebung:
+ * in Produktion abweisen (sonst waere der Schutz per Fehler umgehbar), lokal
+ * durchlassen - dort laedt die Challenge ohnehin nicht zuverlaessig.
+ */
+async function isBot() {
+  try {
+    const verification = await checkBotId();
+    return verification.isBot;
+  } catch (error) {
+    console.error('contact: BotID-Pruefung fehlgeschlagen', error);
+    return process.env.VERCEL_ENV === 'production';
+  }
 }
 
 function validate({ name, email, message }) {
