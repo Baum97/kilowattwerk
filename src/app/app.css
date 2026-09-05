@@ -19,6 +19,9 @@
 .main__panel {
   flex: 2 1 0;
   min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .main__cards {

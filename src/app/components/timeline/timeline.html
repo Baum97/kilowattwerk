@@ -1,0 +1,159 @@
+<section class="timeline">
+  <header class="timeline__header">
+    <h3 class="timeline__title">Verlauf der Erzeugung</h3>
+
+    <!-- eine Steuerzeile fuer alles darunter -->
+    <div class="timeline__ranges" role="group" aria-label="Zeitraum">
+      @for (range of ranges; track range.hours) {
+        <button
+          type="button"
+          class="timeline__range"
+          [class.timeline__range--active]="selection.hours() === range.hours"
+          [attr.aria-pressed]="selection.hours() === range.hours"
+          (click)="selection.setHours(range.hours)"
+        >{{ range.label }}</button>
+      }
+    </div>
+  </header>
+
+  @if (failed()) {
+    <p class="timeline__error" role="alert">
+      Der Verlauf konnte nicht geladen werden — angezeigt sind die vorherigen Daten.
+    </p>
+  }
+
+  <div class="timeline__plot" #plot>
+    @if (hasData()) {
+      <svg
+        class="timeline__svg"
+        [class.timeline__svg--pending]="pending()"
+        [attr.width]="width()"
+        [attr.height]="height"
+        role="img"
+        [attr.aria-label]="summary()"
+        tabindex="0"
+        (pointermove)="onPointer($event)"
+        (pointerleave)="clearCursor()"
+        (keydown)="onKey($event)"
+        (blur)="clearCursor()"
+      >
+        <!-- Gitter: durchgehende Haarlinien, eine Stufe von der Flaeche entfernt -->
+        @for (tick of yTicks(); track tick.value) {
+          <line
+            class="timeline__grid"
+            [attr.x1]="plotLeft" [attr.x2]="plotRight"
+            [attr.y1]="tick.y" [attr.y2]="tick.y"
+          />
+          <text
+            class="timeline__tick timeline__tick--y"
+            [attr.x]="plotLeft - 8" [attr.y]="tick.y + 4"
+          >{{ tick.value | number: '1.0-0' }}</text>
+        }
+
+        <text class="timeline__unit" [attr.x]="plotLeft - 8" [attr.y]="plotTop - 14">MW</text>
+
+        @for (tick of xTicks(); track tick.x) {
+          <text
+            class="timeline__tick"
+            [attr.x]="tick.x" [attr.y]="plotBottom + 18"
+          >{{ tick.label }}</text>
+        }
+
+        <line
+          class="timeline__axis"
+          [attr.x1]="plotLeft" [attr.x2]="plotRight"
+          [attr.y1]="plotBottom" [attr.y2]="plotBottom"
+        />
+
+        @if (readout(); as cursorInfo) {
+          <line
+            class="timeline__crosshair"
+            [attr.x1]="cursorInfo.x" [attr.x2]="cursorInfo.x"
+            [attr.y1]="plotTop" [attr.y2]="plotBottom"
+          />
+        }
+
+        @for (line of lines(); track line.name) {
+          <path
+            class="timeline__line"
+            [class]="'timeline__line--' + line.slot"
+            [attr.d]="line.path"
+          />
+
+          @if (selection.showEndLabels() && line.last !== null) {
+            <circle
+              class="timeline__end"
+              [class]="'timeline__end--' + line.slot"
+              [attr.cx]="line.endX" [attr.cy]="line.endY" r="4"
+            />
+            <text
+              class="timeline__end-label"
+              [attr.x]="line.endX + 10" [attr.y]="line.endY + 4"
+            >{{ line.name }}</text>
+          }
+        }
+      </svg>
+
+      @if (readout(); as cursorInfo) {
+        <div
+          class="timeline__tooltip"
+          role="status"
+          [style.left.px]="cursorInfo.x"
+          [class.timeline__tooltip--flip]="cursorInfo.x > width() * 0.6"
+        >
+          <p class="timeline__tooltip-time">{{ cursorInfo.time }}</p>
+          @for (row of cursorInfo.rows; track row.name) {
+            <p class="timeline__tooltip-row">
+              <span class="timeline__key" [class]="'timeline__key--' + row.slot"></span>
+              <span class="timeline__tooltip-value">
+                {{ row.value !== null ? (row.value | number: '1.0-0') : '—' }} MW
+              </span>
+              <span class="timeline__tooltip-name">{{ row.name }}</span>
+            </p>
+          }
+        </div>
+      }
+    } @else if (selection.count() === 0) {
+      <p class="timeline__empty">
+        Keine Technologie ausgewählt — setz unten in der Tabelle ein Häkchen
+        oder klick auf eine Karte rechts.
+      </p>
+    } @else {
+      <p class="timeline__empty">Daten werden geladen …</p>
+    }
+  </div>
+
+  @if (lines().length) {
+    <ul class="timeline__legend">
+      @for (line of lines(); track line.name) {
+        <li class="timeline__legend-item">
+          <span class="timeline__key" [class]="'timeline__key--' + line.slot"></span>
+          <span class="timeline__legend-name">{{ line.name }}</span>
+        </li>
+      }
+    </ul>
+
+    <!-- Zweitansicht: dieselben Werte ohne Farbe und ohne Zeigen -->
+    <table class="timeline__table">
+      <caption>Kennzahlen der gewählten Reihen</caption>
+      <thead>
+        <tr>
+          <th scope="col">Reihe</th>
+          <th scope="col" class="timeline__num">Aktuell</th>
+          <th scope="col" class="timeline__num">Minimum</th>
+          <th scope="col" class="timeline__num">Maximum</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (line of lines(); track line.name) {
+          <tr>
+            <th scope="row">{{ line.name }}</th>
+            <td class="timeline__num">{{ line.last !== null ? (line.last | number: '1.0-0') : '—' }}</td>
+            <td class="timeline__num">{{ line.min | number: '1.0-0' }}</td>
+            <td class="timeline__num">{{ line.max | number: '1.0-0' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

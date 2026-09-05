@@ -1,6 +1,7 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { GenerationService, MixGroup, MixTechnology } from '../../../service/generation-service/generation-service';
+import { SeriesSelection } from '../../../service/series-selection/series-selection';
 
 /** Donut-Geometrie im viewBox-Raster 0..200 */
 const RADIUS = 76;
@@ -22,6 +23,7 @@ interface Segment extends MixGroup {
 })
 export class Mix {
   protected readonly generation = inject(GenerationService);
+  protected readonly selection = inject(SeriesSelection);
 
   protected readonly radius = RADIUS;
 

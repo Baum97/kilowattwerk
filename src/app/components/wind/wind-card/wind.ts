@@ -1,23 +1,28 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, computed, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { WindMenu } from '../wind-menu/wind-menu';
 import { GenerationService } from '../../../service/generation-service/generation-service';
+import { SeriesSelection } from '../../../service/series-selection/series-selection';
 
 @Component({
   selector: 'app-wind',
-  imports: [DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatChipsModule, MatIconModule, WindMenu],
+  imports: [DatePipe, DecimalPipe, MatCardModule, MatIconModule],
   templateUrl: './wind.html',
   styleUrl: './wind.css',
 })
 export class Wind {
   protected readonly generation = inject(GenerationService);
-  protected readonly menuOpen = signal(false);
+  private readonly selection = inject(SeriesSelection);
 
-  toggleMenu(): void {
-    this.menuOpen.update(open => !open);
+  protected readonly isSelected = computed(() => {
+    const chartable = this.generation.chartableFor('wind');
+    const selected = this.selection.selected();
+    return chartable.length > 0 && chartable.every(name => selected.includes(name));
+  });
+
+  /** Klick auf die Karte ersetzt die Auswahl des Verlaufsgraphen */
+  select(): void {
+    this.selection.replace(this.generation.chartableFor('wind'));
   }
 }

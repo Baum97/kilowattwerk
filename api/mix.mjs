@@ -8,38 +8,10 @@
  * man Aepfel mit Birnen.
  */
 
+import { CATEGORY, CHART_SLOT, NOT_GENERATION } from '../lib/technologies.mjs';
+
 const WINDOW_HOURS = 6;
 const REFRESH_SECONDS = 15 * 60;
-
-/** Reihen, die keine Erzeugungsleistung sind und nicht in den Mix gehoeren */
-const NOT_GENERATION = new Set([
-  'Load',
-  'Residual load',
-  'Renewable share of generation',
-  'Renewable share of load',
-  'Cross border electricity trading',
-  'Hydro pumped storage consumption',
-]);
-
-/** Kategorie je Technologie - steuert die Gruppierung im Donut */
-const CATEGORY = {
-  'Solar': 'renewable',
-  'Wind onshore': 'renewable',
-  'Wind offshore': 'renewable',
-  'Hydro Run-of-River': 'renewable',
-  'Hydro water reservoir': 'renewable',
-  'Biomass': 'renewable',
-  'Geothermal': 'renewable',
-  'Fossil gas': 'fossil',
-  'Fossil hard coal': 'fossil',
-  'Fossil brown coal / lignite': 'fossil',
-  'Fossil oil': 'fossil',
-  'Fossil coal-derived gas': 'fossil',
-  'Nuclear': 'nuclear',
-  'Hydro pumped storage': 'storage',
-  'Waste': 'other',
-  'Others': 'other',
-};
 
 export default async function handler(req, res) {
   const end = new Date();
@@ -78,6 +50,8 @@ export default async function handler(req, res) {
       name,
       mw,
       category: CATEGORY[name] ?? 'other',
+      // null = im Verlaufsgraphen nicht einzeln darstellbar
+      slot: CHART_SLOT[name] ?? null,
     }))
     .sort((a, b) => b.mw - a.mw);
 
