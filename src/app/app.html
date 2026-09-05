@@ -1,7 +1,9 @@
 <app-header></app-header>
 
+<!-- DOM-Reihenfolge = mobile Reihenfolge: Mix, Karten, Graph.
+     Am Desktop setzt das Grid den Graphen zurueck in die linke Spalte. -->
 <main class="main">
-  <section class="main__panel">
+  <section class="main__mix">
     <app-mix></app-mix>
   </section>
 
@@ -10,6 +12,10 @@
     <app-wind></app-wind>
     <app-fossil></app-fossil>
   </aside>
+
+  <section class="main__chart">
+    <app-timeline></app-timeline>
+  </section>
 </main>
 
 <app-contact></app-contact>

@@ -1,0 +1,277 @@
+/*
+ * Serienfarben: kategoriale Slots 1-8, gegen die echten Material-Surfaces
+ * validiert (#f9faf3 hell / #121410 dunkel) - alle Checks bestanden, sowohl
+ * die Trennschaerfe bei Farbfehlsichtigkeit als auch der Normalsicht-Abstand.
+ * Zuordnung Technologie -> Slot liegt fest in lib/technologies.mjs, damit eine
+ * Reihe beim Ab- und Wiederauswaehlen ihre Farbe behaelt.
+ */
+.timeline {
+  --series-1: light-dark(#2a78d6, #3987e5);
+  --series-2: light-dark(#eb6834, #d95926);
+  --series-3: light-dark(#1baf7a, #199e70);
+  --series-4: light-dark(#eda100, #c98500);
+  --series-5: light-dark(#e87ba4, #d55181);
+  --series-6: light-dark(#008300, #008300);
+  --series-7: light-dark(#4a3aa7, #9085e9);
+  --series-8: light-dark(#e34948, #e66767);
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeline__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.timeline__title {
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+/* ---------- Zeitraum ---------- */
+
+.timeline__ranges {
+  display: flex;
+  gap: 4px;
+}
+
+.timeline__range {
+  padding: 4px 10px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-medium);
+  cursor: pointer;
+}
+
+.timeline__range:hover {
+  background: var(--mat-sys-surface-container-high);
+}
+
+.timeline__range--active {
+  border-color: transparent;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+/* ---------- Graph ---------- */
+
+.timeline__plot {
+  position: relative;
+  width: 100%;
+}
+
+.timeline__svg {
+  display: block;
+  max-width: 100%;
+  touch-action: pan-y;
+  transition: opacity 120ms ease;
+}
+
+.timeline__svg--pending {
+  opacity: 0.5;
+}
+
+.timeline__error {
+  margin: 0;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-error);
+}
+
+.timeline__svg:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.timeline__grid,
+.timeline__axis {
+  stroke: var(--mat-sys-outline-variant);
+  stroke-width: 1;
+}
+
+.timeline__crosshair {
+  stroke: var(--mat-sys-outline);
+  stroke-width: 1;
+}
+
+.timeline__tick,
+.timeline__unit {
+  fill: var(--mat-sys-on-surface-variant);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-anchor: middle;
+}
+
+.timeline__tick--y,
+.timeline__unit {
+  text-anchor: end;
+}
+
+/* Duenne Marke, runde Enden - die Daten sind das einzig Laute */
+.timeline__line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.timeline__end {
+  stroke: var(--mat-sys-surface);
+  stroke-width: 2;
+}
+
+.timeline__end-label {
+  fill: var(--mat-sys-on-surface);
+  font-size: 11px;
+}
+
+.timeline__line--1 { stroke: var(--series-1); }
+.timeline__line--2 { stroke: var(--series-2); }
+.timeline__line--3 { stroke: var(--series-3); }
+.timeline__line--4 { stroke: var(--series-4); }
+.timeline__line--5 { stroke: var(--series-5); }
+.timeline__line--6 { stroke: var(--series-6); }
+.timeline__line--7 { stroke: var(--series-7); }
+.timeline__line--8 { stroke: var(--series-8); }
+
+.timeline__end--1 { fill: var(--series-1); }
+.timeline__end--2 { fill: var(--series-2); }
+.timeline__end--3 { fill: var(--series-3); }
+.timeline__end--4 { fill: var(--series-4); }
+.timeline__end--5 { fill: var(--series-5); }
+.timeline__end--6 { fill: var(--series-6); }
+.timeline__end--7 { fill: var(--series-7); }
+.timeline__end--8 { fill: var(--series-8); }
+
+/* ---------- Anzeige am Fadenkreuz ---------- */
+
+.timeline__tooltip {
+  position: absolute;
+  top: 8px;
+  transform: translateX(12px);
+  min-width: 160px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--mat-sys-inverse-surface);
+  color: var(--mat-sys-inverse-on-surface);
+  box-shadow: var(--mat-sys-level2);
+  pointer-events: none;
+}
+
+/* an der rechten Haelfte nach links kippen, statt aus dem Bild zu laufen */
+.timeline__tooltip--flip {
+  transform: translateX(calc(-100% - 12px));
+}
+
+.timeline__tooltip-time {
+  margin: 0 0 4px;
+  font: var(--mat-sys-label-small);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline__tooltip-row {
+  display: grid;
+  grid-template-columns: 10px auto 1fr;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+
+/* Wert fuehrt, Bezeichnung folgt */
+.timeline__tooltip-value {
+  font: var(--mat-sys-label-large);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.timeline__tooltip-name {
+  font: var(--mat-sys-label-small);
+  opacity: 0.75;
+}
+
+/* ---------- Legende ---------- */
+
+.timeline__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+/* Linien tragen einen Strich als Kennung, keine Flaeche */
+.timeline__key {
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.timeline__key--1 { background: var(--series-1); }
+.timeline__key--2 { background: var(--series-2); }
+.timeline__key--3 { background: var(--series-3); }
+.timeline__key--4 { background: var(--series-4); }
+.timeline__key--5 { background: var(--series-5); }
+.timeline__key--6 { background: var(--series-6); }
+.timeline__key--7 { background: var(--series-7); }
+.timeline__key--8 { background: var(--series-8); }
+
+/* ---------- Zweitansicht ---------- */
+
+.timeline__table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--mat-sys-body-small);
+}
+
+.timeline__table caption {
+  text-align: left;
+  padding-bottom: 6px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-small);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.timeline__table th,
+.timeline__table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  font-weight: 400;
+  color: var(--mat-sys-on-surface);
+  text-align: left;
+}
+
+.timeline__table thead th {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.timeline__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.timeline__empty {
+  margin: 24px 0;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+}

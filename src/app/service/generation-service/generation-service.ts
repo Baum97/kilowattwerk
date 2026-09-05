@@ -49,12 +49,6 @@ export interface CurrentPower {
   values: Record<string, number>;
 }
 
-export interface TechnologyPower {
-  id: string;
-  name: string;
-  mw: number;
-}
-
 
 export type MixCategory = 'renewable' | 'fossil' | 'nuclear' | 'storage' | 'other';
 
@@ -63,6 +57,8 @@ export interface MixTechnology {
   mw: number;
   share: number;
   category: MixCategory;
+  /** null = im Verlaufsgraphen nicht einzeln darstellbar */
+  slot: number | null;
 }
 
 export interface PowerMix {
@@ -70,6 +66,20 @@ export interface PowerMix {
   totalMw: number;
   renewableSharePercent: number | null;
   technologies: MixTechnology[];
+}
+
+
+export interface TimelineSeries {
+  name: string;
+  category: MixCategory;
+  slot: number | null;
+  values: (number | null)[];
+}
+
+export interface Timeline {
+  hours: number;
+  timestamps: string[];
+  series: TimelineSeries[];
 }
 
 /** Gruppen des Donuts - bewusst drei, siehe mix-card.ts */
@@ -124,17 +134,11 @@ export class GenerationService {
     return TECHNOLOGIES[type].reduce((sum, tech) => sum + (values[tech] ?? 0), 0);
   }
 
-  /** Aufschluesselung je Technologie, absteigend nach Leistung */
-  breakdown(type: EnergyType): TechnologyPower[] {
-    const { values } = this.current();
-    return TECHNOLOGIES[type]
-      .filter(tech => values[tech] != null)
-      .map(tech => ({ id: tech, name: tech, mw: values[tech] }))
-      .sort((a, b) => b.mw - a.mw);
-  }
 
+  /** Anzahl Technologien des Typs, die aktuell Werte liefern */
   count(type: EnergyType): number {
-    return this.breakdown(type).length;
+    const { values } = this.current();
+    return TECHNOLOGIES[type].filter(tech => values[tech] != null).length;
   }
 
   private readonly mix$ = timer(0, REFRESH_MS).pipe(
@@ -195,6 +199,22 @@ export class GenerationService {
     const max = this.capacityMw(type);
     if (!max) return null;
     return (this.currentMw(type) / max) * 100;
+  }
+
+  /**
+   * Technologien eines Energietyps, die im Verlaufsgraphen darstellbar sind.
+   * Abgeleitet aus dem `slot` der Mix-Antwort - so bleibt lib/technologies.mjs
+   * die einzige Stelle, an der die Zuordnung gepflegt wird.
+   */
+  chartableFor(type: EnergyType): string[] {
+    const slots = new Map(this.mix().technologies.map(tech => [tech.name, tech.slot]));
+    return TECHNOLOGIES[type].filter(name => slots.get(name) != null);
+  }
+
+  timeline(hours: number, technologies: string[]): Observable<Timeline> {
+    return this.http.get<Timeline>('/api/timeline', {
+      params: { hours, technologies: technologies.join(',') },
+    });
   }
 
   daily(type: EnergyType, days = 30): Observable<DailyRow[]> {

@@ -1,16 +1,15 @@
-<mat-card class="wind-card" appearance="outlined">
-  <button
-    matIconButton
-    class="wind-card__add"
-    [class.wind-card__add--open]="menuOpen()"
-    type="button"
-    [attr.aria-label]="menuOpen() ? 'Menü schließen' : 'Windanlage hinzufügen'"
-    [attr.aria-expanded]="menuOpen()"
-    aria-controls="wind-menu"
-    (click)="toggleMenu()"
-  >
-    <mat-icon>{{ menuOpen() ? 'close' : 'add' }}</mat-icon>
-  </button>
+<mat-card
+  class="wind-card"
+  appearance="outlined"
+  role="button"
+  tabindex="0"
+  [class.wind-card--active]="isSelected()"
+  [attr.aria-pressed]="isSelected()"
+  [attr.aria-label]="'Wind im Verlaufsgraphen anzeigen'"
+  (click)="select()"
+  (keydown.enter)="select()"
+  (keydown.space)="select()"
+>
 
   <mat-card-header class="wind-card__header">
     <div mat-card-avatar class="wind-card__avatar">
@@ -41,8 +40,6 @@
       <p class="wind-card__quote">{{ quote | number: '1.0-1' }} % des Maximums</p>
     }
 
-
-
     <dl class="wind-card__stats">
       <div class="wind-card__stat">
         <dt>Stand</dt>
@@ -53,23 +50,5 @@
         <dd>{{ generation.count('wind') }}</dd>
       </div>
     </dl>
-
-    <div id="wind-menu" class="wind-card__menu">
-      <mat-chip-set class="wind-card__chips" aria-label="Windanlagen">
-        @for (tech of generation.breakdown('wind'); track tech.id) {
-          <mat-chip>{{ tech.name }} · {{ tech.mw | number: '1.0-0' }} MW</mat-chip>
-        } @empty {
-          <span class="wind-card__empty">Noch keine Anlage angelegt.</span>
-        }
-      </mat-chip-set>
-    </div>
-
-    @if (menuOpen()) {
-      <div id="wind-menu" class="wind-card__menu">
-        <mat-chip-set class="wind-card__chips" aria-label="Windanlagen">
-          <span class="wind-card__empty">Noch keine Graphen bereitgestellt.</span>
-        </mat-chip-set>
-      </div>
-    }
   </mat-card-content>
 </mat-card>

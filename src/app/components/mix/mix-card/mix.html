@@ -67,6 +67,7 @@
       <caption class="mix__caption">Einzelne Technologien</caption>
       <thead>
         <tr>
+          <th scope="col" class="mix__pick"><span class="mix__sr">Im Graph</span></th>
           <th scope="col">Technologie</th>
           <th scope="col" class="mix__num">MW</th>
           <th scope="col" class="mix__num">Anteil</th>
@@ -75,7 +76,18 @@
       <tbody>
         @for (tech of technologies(); track tech.name) {
           <tr>
-            <th scope="row" class="mix__tech">
+            <td class="mix__pick">
+                @if (tech.slot !== null) {
+                  <input
+                    type="checkbox"
+                    class="mix__checkbox"
+                    [checked]="selection.isSelected(tech.name)"
+                    [attr.aria-label]="tech.name + ' im Verlaufsgraphen anzeigen'"
+                    (change)="selection.toggle(tech.name)"
+                  >
+                }
+              </td>
+              <th scope="row" class="mix__tech">
               <span class="mix__bar"
                     [class.mix__bar--renewable]="groupOf(tech) === 'renewable'"
                     [class.mix__bar--fossil]="groupOf(tech) === 'fossil'"

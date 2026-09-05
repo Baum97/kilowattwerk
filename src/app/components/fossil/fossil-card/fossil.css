@@ -1,5 +1,6 @@
 .fossil-card {
   position: relative;
+  cursor: pointer;
   max-width: 100vw;
   border-radius: 16px;
   overflow: hidden;
@@ -178,4 +179,31 @@
 
 @media (prefers-reduced-motion: reduce) {
   .fossil-card__meter-fill { transition: none; }
+}
+
+/* Karte ist auswaehlbar: aktiv = ihre Reihen liegen im Verlaufsgraphen */
+.fossil-card--active {
+  border-color: var(--mat-sys-primary);
+  box-shadow: var(--mat-sys-level1);
+}
+
+.fossil-card:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 680px) {
+  .fossil-card__value {
+    font: var(--mat-sys-headline-medium);
+  }
+
+  /* Nebeneinander wird es zu eng - Kapazitaet rutscht unter den Istwert */
+  .fossil-card__figures {
+    align-items: flex-start;
+  }
+
+  .fossil-card__capacity {
+    align-items: flex-start;
+    text-align: left;
+  }
 }
