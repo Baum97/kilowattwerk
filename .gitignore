@@ -404,3 +404,14 @@ FodyWeavers.xsd
 
 .vercel
 .env*
+
+# --- projekteigene Ergaenzungen ---
+
+# Ad-hoc-Ausgaben von API-Tests (Invoke-RestMethod / curl)
+/out.json
+/maxPower.json
+
+# Von Marketplace-Integrationen installierte Agent-Skills.
+# skills-lock.json bleibt getrackt - daraus laesst sich der Inhalt neu beziehen.
+/.agents/
+/.claude/skills/

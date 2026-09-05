@@ -1,8 +1,30 @@
-html {
-  height: 100%;
+/*
+ * Zweiteilung 2:1 - Strommix zwei Drittel, Kartenspalte ein Drittel.
+ * `flex-basis: 0` statt Prozentwerten: damit teilt sich der Platz *nach* Abzug
+ * des gap im Verhaeltnis der grow-Faktoren auf. Mit `66%`/`33%` waere die Summe
+ * inklusive gap groesser als die Zeile, und die Spalte wuerde umbrechen.
+ *
+ * Die min-width-Werte loesen den Umbruch aus: passt das Verhaeltnis nicht mehr,
+ * ohne eine Spalte unlesbar schmal zu machen, rutscht die Kartenspalte nach unten.
+ */
+.main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
-background {
-  background-color: rgb(111, 175, 136);
-  height: 100%;
+.main__panel {
+  flex: 2 1 0;
+  min-width: 320px;
+}
+
+.main__cards {
+  flex: 1 1 0;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }

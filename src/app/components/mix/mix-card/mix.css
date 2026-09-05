@@ -1,0 +1,232 @@
+/*
+ * Serienfarben: kategoriale Slots 1-3 der Dataviz-Palette, gegen die echten
+ * Material-Surfaces validiert (#f9faf3 hell / #121410 dunkel) - alle Checks
+ * bestanden. Die Zuordnung ist fest an die Kategorie gebunden, nicht an den
+ * Rang, damit ein Segment beim Umsortieren nicht die Farbe wechselt.
+ * light-dark() folgt dem color-scheme, das die ThemeService-Klasse umschaltet.
+ */
+.mix {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  --mix-renewable: light-dark(#1baf7a, #199e70);
+  --mix-fossil:    light-dark(#eb6834, #d95926);
+  --mix-other:     light-dark(#2a78d6, #3987e5);
+}
+
+.mix__header {
+  /* Abstand kommt vom gap der Sektion */
+}
+
+.mix__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+}
+
+.mix__subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ---------- Donut ---------- */
+
+.mix__chart {
+  position: relative;
+  align-self: center;
+  width: 220px;
+  max-width: 100%;
+}
+
+.mix__donut {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.mix__segment {
+  fill: none;
+  stroke-width: 24;                 /* duenne Marke: 24px Ringstaerke */
+  transition: opacity 120ms ease, stroke-width 120ms ease;
+  cursor: pointer;
+}
+
+.mix__segment:focus-visible {
+  outline: none;
+  stroke-width: 28;
+}
+
+/* Nicht gehovertes Segment tritt zurueck, statt das gehoverte einzufaerben */
+.mix__segment--dim {
+  opacity: 0.35;
+}
+
+.mix__segment--renewable { stroke: var(--mix-renewable); }
+.mix__segment--fossil    { stroke: var(--mix-fossil); }
+.mix__segment--other     { stroke: var(--mix-other); }
+
+/* ---------- Kennzahl in der Mitte ---------- */
+
+.mix__hero {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.mix__hero-value {
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--mat-sys-on-surface);
+}
+
+.mix__hero-unit {
+  font-size: 24px;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.mix__hero-label {
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ---------- Tooltip ---------- */
+
+.mix__tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--mat-sys-inverse-surface);
+  color: var(--mat-sys-inverse-on-surface);
+  box-shadow: var(--mat-sys-level2);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Wert fuehrt, Bezeichnung folgt */
+.mix__tooltip-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mix__tooltip-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ---------- Legende ---------- */
+
+.mix__legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mix__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--mat-sys-on-surface);
+}
+
+.mix__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.mix__swatch--renewable { background: var(--mix-renewable); }
+.mix__swatch--fossil    { background: var(--mix-fossil); }
+.mix__swatch--other     { background: var(--mix-other); }
+
+.mix__legend-value {
+  color: var(--mat-sys-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Tabelle (zugleich die barrierefreie Zweitansicht) ---------- */
+
+.mix__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.mix__caption {
+  text-align: left;
+  padding-bottom: 8px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mix__table th,
+.mix__table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  font-weight: 400;
+  color: var(--mat-sys-on-surface);
+}
+
+.mix__table thead th {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  border-bottom-color: var(--mat-sys-outline);
+}
+
+.mix__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;  /* nur in Spalten, nie auf der Kennzahl */
+  white-space: nowrap;
+}
+
+.mix__tech {
+  position: relative;
+  text-align: left;
+  padding-left: 8px;
+}
+
+/* Balken liegt hinter dem Namen, nicht daneben - spart eine Spalte */
+.mix__bar {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 0 4px 4px 0;          /* 4px am Datenende, eckig an der Basis */
+  opacity: 0.18;
+}
+
+.mix__bar--renewable { background: var(--mix-renewable); }
+.mix__bar--fossil    { background: var(--mix-fossil); }
+.mix__bar--other     { background: var(--mix-other); }
+
+.mix__tech-name {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mix__segment { transition: none; }
+}

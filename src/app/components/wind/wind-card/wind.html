@@ -21,9 +21,25 @@
   </mat-card-header>
 
   <mat-card-content class="wind-card__content">
-    <p class="wind-card__value">
-      {{ generation.currentMw('wind') | number: '1.0-0' }} <span class="wind-card__unit">MW</span>
-    </p>
+    <div class="wind-card__figures">
+      <p class="wind-card__value">
+        {{ generation.currentMw('wind') | number: '1.0-0' }} <span class="wind-card__unit">MW</span>
+      </p>
+
+      <p class="wind-card__capacity">
+        <span class="wind-card__capacity-value">{{ generation.capacityMw('wind') | number: '1.0-0' }} MW</span>
+        <span class="wind-card__capacity-label">installiert{{ generation.capacityYear('wind') ? ' ' + generation.capacityYear('wind') : '' }}</span>
+      </p>
+    </div>
+
+    @if (generation.utilisation('wind'); as quote) {
+      <div class="wind-card__meter"
+           role="img"
+           [attr.aria-label]="(quote | number: '1.0-1') + ' Prozent der installierten Leistung'">
+        <span class="wind-card__meter-fill" [style.width.%]="quote"></span>
+      </div>
+      <p class="wind-card__quote">{{ quote | number: '1.0-1' }} % des Maximums</p>
+    }
 
 
 

@@ -20,11 +20,15 @@ export default async function handler(req, res) {
     
     const maxPowerCapacity = {};
     for (const type of production_types) {
-        let data_length = type.data.length;
-        while (type.data[data_length] == null) {
-            data_length -=1;
+        // rueckwaerts bis zum letzten belegten Jahr - mit unterer Grenze,
+        // sonst laeuft die Schleife bei einer leeren Reihe endlos
+        let i = type.data.length - 1;
+        while (i >= 0 && type.data[i] == null) {
+            i -= 1;
         }
-        values[type.name] = {year: time[data_length], gw: type.data[data_length]};
+        if (i < 0) continue;
+
+        maxPowerCapacity[type.name] = { year: time[i], gw: type.data[i] };
     }
 
     res.setHeader(

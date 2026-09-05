@@ -1,5 +1,4 @@
 .wind-card {
-  margin: 16px;
   position: relative;
   max-width: 100vw;
   border-radius: 16px;
@@ -79,7 +78,7 @@
 }
 
 .wind-card__value {
-  margin: 0 0 16px;
+  margin: 0;
   font: var(--mat-sys-display-small);
   line-height: 1.1;
   color: var(--mat-sys-on-surface);
@@ -123,4 +122,60 @@
   margin-top: 16px;
   padding-top: 12px;
   border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+/* Aktuelle Leistung links, installierte rechts - der Kontrast ist die Aussage */
+.wind-card__figures {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.wind-card__capacity {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.wind-card__capacity-value {
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+
+.wind-card__capacity-label {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Meter: gefuellter Anteil und Spur aus derselben Farbe, damit der Zustand
+   ueber die ganze Breite lesbar bleibt */
+.wind-card__meter {
+  margin-top: 12px;
+  height: 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--mat-sys-primary) 16%, transparent);
+  overflow: hidden;
+}
+
+.wind-card__meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--mat-sys-primary);
+  transition: width 240ms ease;
+}
+
+.wind-card__quote {
+  margin: 6px 0 16px;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wind-card__meter-fill { transition: none; }
 }

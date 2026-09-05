@@ -21,9 +21,25 @@
   </mat-card-header>
 
   <mat-card-content class="fossil-card__content">
-    <p class="fossil-card__value">
-      {{ generation.currentMw('fossil') | number: '1.0-0' }} <span class="fossil-card__unit">MW</span>
-    </p>
+    <div class="fossil-card__figures">
+      <p class="fossil-card__value">
+        {{ generation.currentMw('fossil') | number: '1.0-0' }} <span class="fossil-card__unit">MW</span>
+      </p>
+
+      <p class="fossil-card__capacity">
+        <span class="fossil-card__capacity-value">{{ generation.capacityMw('fossil') | number: '1.0-0' }} MW</span>
+        <span class="fossil-card__capacity-label">installiert{{ generation.capacityYear('fossil') ? ' ' + generation.capacityYear('fossil') : '' }}</span>
+      </p>
+    </div>
+
+    @if (generation.utilisation('fossil'); as quote) {
+      <div class="fossil-card__meter"
+           role="img"
+           [attr.aria-label]="(quote | number: '1.0-1') + ' Prozent der installierten Leistung'">
+        <span class="fossil-card__meter-fill" [style.width.%]="quote"></span>
+      </div>
+      <p class="fossil-card__quote">{{ quote | number: '1.0-1' }} % des Maximums</p>
+    }
 
     <dl class="fossil-card__stats">
       <div class="fossil-card__stat">

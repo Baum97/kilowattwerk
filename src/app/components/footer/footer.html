@@ -1,0 +1,40 @@
+<footer class="footer">
+  <div class="footer__support">
+    <p class="footer__pitch">
+      KilowattWerk ist ein privates Projekt und kostenlos nutzbar.
+    </p>
+    <button
+      matButton
+      class="footer__contact"
+      type="button"
+      aria-controls="kontakt"
+      [attr.aria-expanded]="panel.open()"
+      (click)="panel.toggle()"
+    >
+      <mat-icon>{{ panel.open() ? 'expand_more' : 'expand_less' }}</mat-icon>
+      Kontakt
+    </button>
+
+    <a
+      matButton="outlined"
+      class="footer__donate"
+      [href]="donateUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <mat-icon>favorite</mat-icon>
+      Unterstütze mich
+    </a>
+  </div>
+
+  <div class="footer__meta">
+    <p class="footer__source">
+      Daten:
+      <a href="https://energy-charts.info" target="_blank" rel="noopener noreferrer">
+        energy-charts.info
+      </a>
+      — Fraunhofer-Institut für Solare Energiesysteme ISE
+    </p>
+    <p class="footer__copyright">© {{ year }} KilowattWerk</p>
+  </div>
+</footer>

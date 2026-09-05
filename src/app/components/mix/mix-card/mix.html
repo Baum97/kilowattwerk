@@ -1,0 +1,93 @@
+<section class="mix">
+  <header class="mix__header">
+    <h2 class="mix__title">Strom Abdeckung</h2>
+    <p class="mix__subtitle">
+      @if (mix().ts) {
+        Stand {{ mix().ts | date: 'HH:mm' }} · {{ mix().totalMw | number: '1.0-0' }} MW Erzeugung
+      } @else {
+        Daten werden geladen …
+      }
+    </p>
+  </header>
+
+  <div class="mix__chart">
+    <svg class="mix__donut" viewBox="0 0 200 200" role="img"
+         [attr.aria-label]="'Aktueller Strommix, ' + (renewableShare() | number: '1.0-1') + ' Prozent erneuerbar. Einzelwerte in der Tabelle darunter.'">
+      <g transform="rotate(-90 100 100)">
+        @for (segment of segments(); track segment.id) {
+          <circle
+            class="mix__segment"
+            [class.mix__segment--renewable]="segment.id === 'renewable'"
+            [class.mix__segment--fossil]="segment.id === 'fossil'"
+            [class.mix__segment--other]="segment.id === 'other'"
+            [class.mix__segment--dim]="hovered() && hovered()?.id !== segment.id"
+            cx="100" cy="100" [attr.r]="radius"
+            [attr.stroke-dasharray]="segment.dashArray"
+            [attr.stroke-dashoffset]="segment.dashOffset"
+            tabindex="0"
+            [attr.aria-label]="segment.label + ': ' + (segment.mw | number: '1.0-0') + ' Megawatt, ' + (segment.share | number: '1.0-1') + ' Prozent'"
+            (pointerenter)="show(segment)"
+            (pointerleave)="clear()"
+            (focus)="show(segment)"
+            (blur)="clear()"
+          ></circle>
+        }
+      </g>
+    </svg>
+
+    <!-- Kennzahl in der Mitte: die eine Zahl, die der Donut erzaehlt -->
+    <div class="mix__hero" aria-hidden="true">
+      <span class="mix__hero-value">{{ renewableShare() | number: '1.0-1' }}<span class="mix__hero-unit">%</span></span>
+      <span class="mix__hero-label">erneuerbar</span>
+    </div>
+
+    @if (hovered(); as group) {
+      <div class="mix__tooltip" role="status">
+        <span class="mix__tooltip-value">{{ group.mw | number: '1.0-0' }} MW</span>
+        <span class="mix__tooltip-label">{{ group.label }} · {{ group.share | number: '1.0-1' }} %</span>
+      </div>
+    }
+  </div>
+
+  <ul class="mix__legend">
+    @for (group of groups(); track group.id) {
+      <li class="mix__legend-item">
+        <span class="mix__swatch"
+              [class.mix__swatch--renewable]="group.id === 'renewable'"
+              [class.mix__swatch--fossil]="group.id === 'fossil'"
+              [class.mix__swatch--other]="group.id === 'other'"></span>
+        <span class="mix__legend-label">{{ group.label }}</span>
+        <span class="mix__legend-value">{{ group.share | number: '1.0-1' }} %</span>
+      </li>
+    }
+  </ul>
+
+  @if (technologies().length) {
+    <table class="mix__table">
+      <caption class="mix__caption">Einzelne Technologien</caption>
+      <thead>
+        <tr>
+          <th scope="col">Technologie</th>
+          <th scope="col" class="mix__num">MW</th>
+          <th scope="col" class="mix__num">Anteil</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (tech of technologies(); track tech.name) {
+          <tr>
+            <th scope="row" class="mix__tech">
+              <span class="mix__bar"
+                    [class.mix__bar--renewable]="groupOf(tech) === 'renewable'"
+                    [class.mix__bar--fossil]="groupOf(tech) === 'fossil'"
+                    [class.mix__bar--other]="groupOf(tech) === 'other'"
+                    [style.width.%]="barWidth(tech)"></span>
+              <span class="mix__tech-name">{{ tech.name }}</span>
+            </th>
+            <td class="mix__num">{{ tech.mw | number: '1.0-0' }}</td>
+            <td class="mix__num">{{ tech.share | number: '1.1-1' }} %</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
