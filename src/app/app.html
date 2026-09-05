@@ -1,10 +1,19 @@
 <app-header></app-header>
 
-
 <main class="main">
+  <section class="main__panel">
+    <app-mix></app-mix>
+  </section>
 
-<app-solar></app-solar>
-<app-wind></app-wind>
-<app-fossil></app-fossil>
+  <aside class="main__cards">
+    <app-solar></app-solar>
+    <app-wind></app-wind>
+    <app-fossil></app-fossil>
+  </aside>
+</main>
+
+<app-contact></app-contact>
 
 <router-outlet />
+
+<app-footer></app-footer>

@@ -21,6 +21,29 @@ export const TECHNOLOGIES: Record<EnergyType, string[]> = {
   ],
 };
 
+
+/**
+ * Technologienamen fuer die installierte Leistung. Bewusst eine eigene Map:
+ * `installed_power` benennt die Reihen anders als `public_power` - dort
+ * "Solar AC"/"Solar DC" statt "Solar", "Hydro" statt der drei Wasser-Reihen.
+ * Solar AC ist die netzwirksame Groesse, DC waere die Modul-Nennleistung.
+ */
+export const CAPACITY_TECHNOLOGIES: Record<EnergyType, string[]> = {
+  solar: ['Solar AC'],
+  wind: ['Wind onshore', 'Wind offshore'],
+  hydro: ['Hydro'],
+  fossil: ['Fossil gas', 'Fossil hard coal', 'Fossil brown coal / lignite', 'Fossil oil'],
+};
+
+export interface CapacityEntry {
+  year: string;
+  gw: number;
+}
+
+export interface CapacityResponse {
+  maxPowerCapacity: Record<string, CapacityEntry>;
+}
+
 export interface CurrentPower {
   ts: string | null;
   values: Record<string, number>;
@@ -32,10 +55,45 @@ export interface TechnologyPower {
   mw: number;
 }
 
+
+export type MixCategory = 'renewable' | 'fossil' | 'nuclear' | 'storage' | 'other';
+
+export interface MixTechnology {
+  name: string;
+  mw: number;
+  share: number;
+  category: MixCategory;
+}
+
+export interface PowerMix {
+  ts: string | null;
+  totalMw: number;
+  renewableSharePercent: number | null;
+  technologies: MixTechnology[];
+}
+
+/** Gruppen des Donuts - bewusst drei, siehe mix-card.ts */
+export interface MixGroup {
+  id: 'renewable' | 'fossil' | 'other';
+  label: string;
+  mw: number;
+  share: number;
+}
+
+const GROUP_LABEL: Record<MixGroup['id'], string> = {
+  renewable: 'Erneuerbar',
+  fossil: 'Fossil',
+  other: 'Sonstige',
+};
+
 /** energy-charts publiziert im 15-Minuten-Raster */
 const REFRESH_MS = 15 * 60 * 1000;
 
 const EMPTY_POWER: CurrentPower = { ts: null, values: {} };
+
+const EMPTY_CAPACITY: CapacityResponse = { maxPowerCapacity: {} };
+
+const EMPTY_MIX: PowerMix = { ts: null, totalMw: 0, renewableSharePercent: null, technologies: [] };
 
 @Injectable({ providedIn: 'root' })
 export class GenerationService {
@@ -77,6 +135,66 @@ export class GenerationService {
 
   count(type: EnergyType): number {
     return this.breakdown(type).length;
+  }
+
+  private readonly mix$ = timer(0, REFRESH_MS).pipe(
+    switchMap(() => this.http.get<PowerMix>('/api/mix').pipe(catchError(() => EMPTY))),
+    shareReplay({ bufferSize: 1, refCount: false })
+  );
+
+  readonly mix = toSignal(this.mix$, { initialValue: EMPTY_MIX });
+
+  /**
+   * Technologien zu drei Gruppen zusammengefasst. Fuenfzehn Segmente waeren als
+   * Donut nicht lesbar - die Einzelwerte stehen in der Tabelle darunter.
+   */
+  readonly mixGroups = computed<MixGroup[]>(() => {
+    const { technologies, totalMw } = this.mix();
+    if (!totalMw) return [];
+
+    const sums: Record<MixGroup['id'], number> = { renewable: 0, fossil: 0, other: 0 };
+
+    for (const tech of technologies) {
+      const id = tech.category === 'renewable' || tech.category === 'fossil' ? tech.category : 'other';
+      sums[id] += tech.mw;
+    }
+
+    return (['renewable', 'fossil', 'other'] as const)
+      .map(id => ({ id, label: GROUP_LABEL[id], mw: sums[id], share: (sums[id] / totalMw) * 100 }))
+      .filter(group => group.mw > 0);
+  });
+
+  /**
+   * Installierte Leistung - einmalig geladen, kein Poll: die Reihe ist
+   * jaehrlich aufgeloest und aendert sich nicht im Minutentakt.
+   */
+  private readonly capacity$ = this.http.get<CapacityResponse>('/api/maxPowerCapacity').pipe(
+    catchError(() => EMPTY),
+    shareReplay({ bufferSize: 1, refCount: false })
+  );
+
+  private readonly capacity = toSignal(this.capacity$, { initialValue: EMPTY_CAPACITY });
+
+  /** Installierte Leistung des Energietyps in MW (Quelle liefert GW) */
+  capacityMw(type: EnergyType): number {
+    const entries = this.capacity().maxPowerCapacity;
+    return CAPACITY_TECHNOLOGIES[type].reduce(
+      (sum, tech) => sum + (entries[tech]?.gw ?? 0) * 1000,
+      0
+    );
+  }
+
+  /** Bezugsjahr der installierten Leistung, fuer die Beschriftung */
+  capacityYear(type: EnergyType): string | null {
+    const entries = this.capacity().maxPowerCapacity;
+    return CAPACITY_TECHNOLOGIES[type].map(tech => entries[tech]?.year).find(Boolean) ?? null;
+  }
+
+  /** Anteil der aktuellen an der installierten Leistung, in Prozent */
+  utilisation(type: EnergyType): number | null {
+    const max = this.capacityMw(type);
+    if (!max) return null;
+    return (this.currentMw(type) / max) * 100;
   }
 
   daily(type: EnergyType, days = 30): Observable<DailyRow[]> {

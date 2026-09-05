@@ -1,0 +1,56 @@
+<section class="contact" id="kontakt" #section [class.contact--open]="panel.open()">
+  <div class="contact__collapse">
+   <div class="contact__inner" [attr.inert]="panel.open() ? null : ''">
+    <h2 class="contact__title">Kontakt</h2>
+    <p class="contact__intro">
+      Fragen, Fehler entdeckt oder eine Idee? Schreib mir — ich melde mich per E-Mail zurück.
+    </p>
+
+    @if (state() === 'sent') {
+      <p class="contact__success" role="status">
+        <mat-icon>check_circle</mat-icon>
+        Danke, deine Nachricht ist unterwegs.
+      </p>
+    }
+
+    <form class="contact__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" autocomplete="name" required>
+        @if (form.controls.name.touched && form.controls.name.invalid) {
+          <mat-error>Bitte gib deinen Namen an.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>E-Mail</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" required>
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <mat-error>Bitte gib eine gültige E-Mail-Adresse an.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="contact__message">
+        <mat-label>Nachricht</mat-label>
+        <textarea matInput formControlName="message" rows="5" required></textarea>
+        @if (form.controls.message.touched && form.controls.message.invalid) {
+          <mat-error>Bitte schreib eine Nachricht.</mat-error>
+        }
+      </mat-form-field>
+
+      @if (errorMessage(); as message) {
+        <p class="contact__error" role="alert">{{ message }}</p>
+      }
+
+      <div class="contact__actions">
+        <button matButton="filled" type="submit" [disabled]="state() === 'sending'">
+          {{ state() === 'sending' ? 'Wird gesendet …' : 'Nachricht senden' }}
+        </button>
+        <p class="contact__privacy">
+          Geschützt durch Vercel BotID.
+        </p>
+    </div>
+    </form>
+   </div>
+  </div>
+</section>

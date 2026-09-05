@@ -1,0 +1,86 @@
+/*
+ * Auf-/Zuklappen ueber grid-template-rows 0fr -> 1fr: animiert die tatsaechliche
+ * Inhaltshoehe, ohne dass eine feste max-height geraten werden muss.
+ */
+.contact {
+  /* Header ist sticky - ohne Abstand scrollt der Titel darunter */
+  scroll-margin-top: 72px;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms ease, border-color 260ms ease;
+  border-top: 1px solid transparent;
+}
+
+.contact--open {
+  grid-template-rows: 1fr;
+  border-top-color: var(--mat-sys-outline-variant);
+}
+
+.contact__collapse {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.contact__inner {
+  padding: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact {
+    transition: none;
+  }
+}
+
+.contact__title {
+  margin: 0;
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+}
+
+.contact__intro {
+  margin: 4px 0 16px;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.contact__form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0 16px;
+  max-width: 720px;
+}
+
+/* Nachricht und Aktionen ueber die volle Breite, Name und E-Mail nebeneinander */
+.contact__message,
+.contact__actions,
+.contact__error {
+  grid-column: 1 / -1;
+}
+
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.contact__privacy {
+  margin: 0;
+  font: var(--mat-sys-label-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.contact__success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-primary);
+}
+
+.contact__error {
+  margin: 0 0 12px;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-error);
+}

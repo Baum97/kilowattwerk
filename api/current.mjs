@@ -37,9 +37,12 @@ export default async function handler(req, res) {
     }
   }
 
+  // max-age=0 zwingt den Browser, jedes Mal beim CDN nachzufragen. Ohne diese
+  // Angabe schaetzt er die Haltbarkeit selbst - je URL unterschiedlich, wodurch
+  // Karten und Strommix verschiedene Zeitstaende anzeigen.
   res.setHeader(
     'Cache-Control',
-    `s-maxage=${REFRESH_SECONDS * 15}, stale-while-revalidate=${REFRESH_SECONDS}`
+    `public, max-age=0, s-maxage=${REFRESH_SECONDS * 15}, stale-while-revalidate=60`
   );
 
   return res.status(200).json({
