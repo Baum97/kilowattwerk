@@ -9,6 +9,10 @@ import { GenerationService, Timeline as TimelineData } from '../../service/gener
 import { RANGES, SeriesSelection } from '../../service/series-selection/series-selection';
 
 const HEIGHT = 300;
+const HEIGHT_NARROW = 220;
+
+/** unter dieser Breite bleibt fuer Endbeschriftungen kein Platz */
+const NARROW = 560;
 // top traegt die Einheit ueber der obersten Achsenbeschriftung
 const PAD = { top: 32, bottom: 30, left: 58 };
 const RIGHT_WITH_LABELS = 96;
@@ -45,7 +49,17 @@ export class Timeline {
   private readonly plot = viewChild<ElementRef<HTMLElement>>('plot');
 
   protected readonly width = signal(760);
-  protected readonly height = HEIGHT;
+
+  protected readonly narrow = computed(() => this.width() < NARROW);
+
+  /** flacher auf dem Telefon - 300px fuellen dort den halben Bildschirm */
+  protected readonly height = computed(() => (this.narrow() ? HEIGHT_NARROW : HEIGHT));
+
+  /**
+   * Endbeschriftungen brauchen 96px am rechten Rand. Auf einem 360px-Schirm
+   * blieben davon 200px Plotbreite - dann traegt allein die Legende.
+   */
+  protected readonly endLabels = computed(() => this.selection.showEndLabels() && !this.narrow());
 
   /** Index des Fadenkreuzes, null = kein Zeiger auf dem Graphen */
   protected readonly cursor = signal<number | null>(null);
@@ -96,7 +110,7 @@ export class Timeline {
   protected readonly hasData = computed(() => this.timestamps().length > 1);
 
   private readonly right = computed(() =>
-    this.selection.showEndLabels() ? RIGHT_WITH_LABELS : RIGHT_PLAIN
+    this.endLabels() ? RIGHT_WITH_LABELS : RIGHT_PLAIN
   );
 
   /** Obere Achsengrenze, auf einen runden Wert aufgerundet */
@@ -117,7 +131,7 @@ export class Timeline {
     const stamps = this.timestamps();
     if (stamps.length < 2) return [];
 
-    const wanted = Math.min(6, stamps.length);
+    const wanted = Math.min(this.narrow() ? 3 : 6, stamps.length);
     const step = Math.max(1, Math.floor((stamps.length - 1) / (wanted - 1)));
 
     const ticks: { x: number; label: string }[] = [];
@@ -205,7 +219,10 @@ export class Timeline {
       // Beschriftung mit dem Container und wird unlesbar
       const observer = new ResizeObserver(entries => {
         const entry = entries[0];
-        if (entry) this.width.set(Math.max(320, Math.round(entry.contentRect.width)));
+        // Untergrenze nur gegen entartete Rechnung. Hoeher angesetzt wuerde
+        // das SVG breiter als sein Container und rechts abgeschnitten - ein
+        // SVG ohne viewBox skaliert nicht mit.
+        if (entry) this.width.set(Math.max(240, Math.round(entry.contentRect.width)));
       });
       observer.observe(element);
     });
@@ -220,7 +237,7 @@ export class Timeline {
 
   protected toY(value: number): number {
     const max = this.yMax() || 1;
-    const span = HEIGHT - PAD.top - PAD.bottom;
+    const span = this.height() - PAD.top - PAD.bottom;
     return PAD.top + span * (1 - value / max);
   }
 
@@ -233,7 +250,7 @@ export class Timeline {
   }
 
   protected get plotBottom(): number {
-    return HEIGHT - PAD.bottom;
+    return this.height() - PAD.bottom;
   }
 
   protected get plotRight(): number {

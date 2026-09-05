@@ -1,33 +1,57 @@
 /*
- * Zweiteilung 2:1 - Strommix zwei Drittel, Kartenspalte ein Drittel.
- * `flex-basis: 0` statt Prozentwerten: damit teilt sich der Platz *nach* Abzug
- * des gap im Verhaeltnis der grow-Faktoren auf. Mit `66%`/`33%` waere die Summe
- * inklusive gap groesser als die Zeile, und die Spalte wuerde umbrechen.
+ * Zwei Spalten am Desktop (2:1), eine auf dem Telefon.
  *
- * Die min-width-Werte loesen den Umbruch aus: passt das Verhaeltnis nicht mehr,
- * ohne eine Spalte unlesbar schmal zu machen, rutscht die Kartenspalte nach unten.
+ * Grid statt Flex, weil die mobile Reihenfolge (Mix -> Karten -> Graph) nicht
+ * der Spaltenaufteilung entspricht: der Graph steht am Desktop unter dem Mix in
+ * der linken Spalte, mobil aber unter den Karten. Die DOM-Folge ist die mobile;
+ * das Grid ordnet nur am Desktop um.
  */
 .main {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: minmax(320px, 2fr) minmax(280px, 1fr);
+  gap: 32px 24px;
+  align-items: start;
   padding: 24px;
   box-sizing: border-box;
 }
 
-.main__panel {
-  flex: 2 1 0;
-  min-width: 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+.main__mix {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
 }
 
 .main__cards {
-  flex: 1 1 0;
-  min-width: 280px;
+  grid-column: 2;
+  grid-row: 1 / span 2;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
+}
+
+.main__chart {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+}
+
+/*
+ * Unter dieser Breite bleibt fuer zwei Spalten kein lesbarer Platz
+ * (320 + 280 + 24 Abstand + 32 Polsterung). Alles wird eine Spalte und
+ * folgt der DOM-Reihenfolge.
+ */
+@media (max-width: 680px) {
+  .main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 16px;
+  }
+
+  .main__mix,
+  .main__cards,
+  .main__chart {
+    grid-column: 1;
+    grid-row: auto;
+  }
 }

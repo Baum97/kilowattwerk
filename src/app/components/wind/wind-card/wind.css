@@ -191,3 +191,19 @@
   outline: 2px solid var(--mat-sys-primary);
   outline-offset: 2px;
 }
+
+@media (max-width: 680px) {
+  .wind-card__value {
+    font: var(--mat-sys-headline-medium);
+  }
+
+  /* Nebeneinander wird es zu eng - Kapazitaet rutscht unter den Istwert */
+  .wind-card__figures {
+    align-items: flex-start;
+  }
+
+  .wind-card__capacity {
+    align-items: flex-start;
+    text-align: left;
+  }
+}

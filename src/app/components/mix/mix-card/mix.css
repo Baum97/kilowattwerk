@@ -253,3 +253,30 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* ---------- Telefon ---------- */
+
+@media (max-width: 680px) {
+  /* Der Donut darf schrumpfen, statt die Spalte aufzuspannen */
+  .mix__chart {
+    width: min(220px, 70vw);
+  }
+
+  .mix__hero-value {
+    font-size: 40px;
+  }
+
+  .mix__table {
+    font-size: 13px;
+  }
+
+  .mix__table th,
+  .mix__table td {
+    padding: 6px 4px;
+  }
+
+  /* Lange Namen wie "Fossil brown coal / lignite" duerfen umbrechen */
+  .mix__tech-name {
+    overflow-wrap: anywhere;
+  }
+}

@@ -28,7 +28,7 @@
         class="timeline__svg"
         [class.timeline__svg--pending]="pending()"
         [attr.width]="width()"
-        [attr.height]="height"
+        [attr.height]="height()"
         role="img"
         [attr.aria-label]="summary()"
         tabindex="0"
@@ -80,7 +80,7 @@
             [attr.d]="line.path"
           />
 
-          @if (selection.showEndLabels() && line.last !== null) {
+          @if (endLabels() && line.last !== null) {
             <circle
               class="timeline__end"
               [class]="'timeline__end--' + line.slot"
