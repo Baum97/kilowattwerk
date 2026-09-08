@@ -10,7 +10,13 @@
 
 import { CATEGORY, CHART_SLOT, NOT_GENERATION } from '../lib/technologies.mjs';
 
-const WINDOW_HOURS = 6;
+/*
+ * Gross genug, damit auch ein mehrstuendiger Verzug bei energy-charts noch
+ * einen Messwert enthaelt. Die Quelle laesst sich zeitweise um ueber 20 Stunden
+ * zurueckfallen; mit einem 6-Stunden-Fenster war die Antwort dann leer.
+ * Kostet nur Uebertragung: gelesen wird ohnehin nur der letzte Wert je Reihe.
+ */
+const WINDOW_HOURS = 48;
 const REFRESH_SECONDS = 15 * 60;
 
 export default async function handler(req, res) {

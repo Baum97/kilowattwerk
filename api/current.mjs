@@ -4,7 +4,13 @@
  * Ingest-Cron laeuft 1x/Tag, kann also keinen aktuellen Wert liefern.
  */
 
-const WINDOW_HOURS = 6;
+/*
+ * Gross genug, damit auch ein mehrstuendiger Verzug bei energy-charts noch
+ * einen Messwert enthaelt. Die Quelle laesst sich zeitweise um ueber 20 Stunden
+ * zurueckfallen; mit einem 6-Stunden-Fenster war die Antwort dann leer.
+ * Kostet nur Uebertragung: gelesen wird ohnehin nur der letzte Wert je Reihe.
+ */
+const WINDOW_HOURS = 48;
 const REFRESH_SECONDS = 60;
 
 export default async function handler(req, res) {
@@ -23,14 +29,17 @@ export default async function handler(req, res) {
 
   const { unix_seconds, production_types } = await upstream.json();
 
-  // je Technologie der letzte nicht-leere Messwert
+  // je Technologie der letzte nicht-leere Messwert - samt eigenem Zeitstempel,
+  // denn die Reihen laufen unterschiedlich weit
   const values = {};
+  const timestamps = {};
   let latestIndex = -1;
 
   for (const type of production_types) {
     for (let i = type.data.length - 1; i >= 0; i--) {
       if (type.data[i] != null) {
         values[type.name] = type.data[i];
+        timestamps[type.name] = new Date(unix_seconds[i] * 1000).toISOString();
         if (i > latestIndex) latestIndex = i;
         break;
       }
@@ -48,5 +57,6 @@ export default async function handler(req, res) {
   return res.status(200).json({
     ts: latestIndex >= 0 ? new Date(unix_seconds[latestIndex] * 1000).toISOString() : null,
     values,
+    timestamps,
   });
 }

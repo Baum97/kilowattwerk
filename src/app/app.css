@@ -34,6 +34,9 @@
   grid-column: 1;
   grid-row: 2;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 /*
