@@ -21,14 +21,13 @@
 
 .mix__title {
   margin: 0;
-  font-size: 22px;
-  font-weight: 500;
+  font: var(--mat-sys-title-large);
   color: var(--mat-sys-on-surface);
 }
 
 .mix__subtitle {
   margin: 4px 0 0;
-  font-size: 14px;
+  font: var(--mat-sys-body-small);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -82,6 +81,8 @@
   text-align: center;
 }
 
+/* Bewusst hart: die eine Hero-Zahl der Seite, groesser als jedes
+   Material-Token (display-small = 36px) */
 .mix__hero-value {
   font-size: 48px;
   font-weight: 600;
@@ -90,13 +91,12 @@
 }
 
 .mix__hero-unit {
-  font-size: 24px;
-  font-weight: 500;
+  font: var(--mat-sys-title-large);
   margin-left: 2px;
 }
 
 .mix__hero-label {
-  font-size: 14px;
+  font: var(--mat-sys-body-small);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -121,12 +121,11 @@
 
 /* Wert fuehrt, Bezeichnung folgt */
 .mix__tooltip-value {
-  font-size: 16px;
-  font-weight: 600;
+  font: var(--mat-sys-label-large);
 }
 
 .mix__tooltip-label {
-  font-size: 12px;
+  font: var(--mat-sys-label-small);
   opacity: 0.8;
 }
 
@@ -146,7 +145,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font: var(--mat-sys-label-medium);
   color: var(--mat-sys-on-surface);
 }
 
@@ -171,14 +170,14 @@
 .mix__table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font: var(--mat-sys-body-small);
 }
 
 .mix__caption {
   text-align: left;
   padding-bottom: 8px;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font: var(--mat-sys-label-small);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -193,7 +192,7 @@
 
 .mix__table thead th {
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font: var(--mat-sys-label-small);
   border-bottom-color: var(--mat-sys-outline);
 }
 
@@ -267,7 +266,7 @@
   }
 
   .mix__table {
-    font-size: 13px;
+    font: var(--mat-sys-label-medium);
   }
 
   .mix__table th,

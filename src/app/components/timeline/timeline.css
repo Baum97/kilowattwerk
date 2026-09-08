@@ -106,7 +106,7 @@
 .timeline__tick,
 .timeline__unit {
   fill: var(--mat-sys-on-surface-variant);
-  font-size: 11px;
+  font: var(--mat-sys-label-small);
   font-variant-numeric: tabular-nums;
   text-anchor: middle;
 }
@@ -131,7 +131,7 @@
 
 .timeline__end-label {
   fill: var(--mat-sys-on-surface);
-  font-size: 11px;
+  font: var(--mat-sys-label-small);
 }
 
 .timeline__line--1 { stroke: var(--series-1); }

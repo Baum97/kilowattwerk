@@ -64,7 +64,7 @@
 .expansion__tick,
 .expansion__unit {
   fill: var(--mat-sys-on-surface-variant);
-  font-size: 11px;
+  font: var(--mat-sys-label-small);
   font-variant-numeric: tabular-nums;
   text-anchor: middle;
 }
@@ -77,8 +77,7 @@
 /* Direktbeschriftung traegt Textfarbe, nicht die Serienfarbe */
 .expansion__cap {
   fill: var(--mat-sys-on-surface);
-  font-size: 12px;
-  font-weight: 500;
+  font: var(--mat-sys-label-medium);
   text-anchor: middle;
 }
 
