@@ -1,4 +1,6 @@
 <section class="expansion">
+  <div class="section-bar" aria-hidden="true"></div>
+
   <header class="expansion__header">
     <h3 class="expansion__title">Ausbau der Erneuerbaren</h3>
     <p class="expansion__subtitle">Erzeugte Jahresenergie je Technologie</p>
@@ -117,7 +119,7 @@
 
     <!-- Zweitansicht: dieselben Werte ohne Farbe und ohne Zeigen -->
     <div class="expansion__scroller">
-      <table class="expansion__table">
+      <table class="expansion__table data-table">
         <caption>Jahresenergie in TWh</caption>
         <thead>
           <tr>
@@ -136,7 +138,7 @@
               }
             </tr>
           }
-          <tr class="expansion__total-row">
+          <tr class="expansion__total-row is-total">
             <th scope="row">Gesamt</th>
             @for (total of totals(); track $index) {
               <td class="expansion__num">{{ total | number: '1.0-1' }}</td>

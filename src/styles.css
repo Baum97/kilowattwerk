@@ -2,3 +2,25 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/*
+ * Abschnittsmarke ueber jedem Graphen. Global, weil sie in mehreren
+ * Komponenten vorkommt. Farbe ist `surface-container` - dieselbe Stufe wie
+ * Kopfzeile und Karten: im Hellmodus cremefarben, im Dunkelmodus eine Stufe
+ * heller als die Seite.
+ */
+.section-bar {
+  width: 100%;
+  height: 30px;
+  background-color: var(--mat-sys-surface-container);
+}
+
+/*
+ * Zeilenstreifen fuer Datentabellen. Global, weil drei Komponenten sie
+ * verwenden. Farbe ist `surface-container` - dieselbe Stufe wie Kopfzeile,
+ * Karten und Abschnittsbalken: hell cremefarben, dunkel eine Stufe heller.
+ * `.is-total` bleibt ausgenommen, damit Summenzeilen sich weiter abheben.
+ */
+.data-table tbody tr:nth-of-type(odd):not(.is-total) {
+  background-color: var(--mat-sys-surface-container);
+}
