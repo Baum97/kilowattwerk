@@ -1,0 +1,149 @@
+<section class="expansion">
+  <header class="expansion__header">
+    <h3 class="expansion__title">Ausbau der Erneuerbaren</h3>
+    <p class="expansion__subtitle">Erzeugte Jahresenergie je Technologie</p>
+  </header>
+
+  <div class="expansion__plot" #plot>
+    @if (hasData()) {
+      <svg
+        class="expansion__svg"
+        [attr.width]="width()"
+        [attr.height]="height()"
+        role="img"
+        [attr.aria-label]="summary()"
+        tabindex="0"
+        (pointermove)="onPointer($event)"
+        (pointerleave)="clearCursor()"
+        (keydown)="onKey($event)"
+        (blur)="clearCursor()"
+      >
+        @for (tick of yTicks(); track tick.value) {
+          <line
+            class="expansion__grid"
+            [attr.x1]="plotLeft" [attr.x2]="plotRight"
+            [attr.y1]="tick.y" [attr.y2]="tick.y"
+          />
+          <text
+            class="expansion__tick expansion__tick--y"
+            [attr.x]="plotLeft - 8" [attr.y]="tick.y + 4"
+          >{{ tick.value | number: '1.0-0' }}</text>
+        }
+
+        <text class="expansion__unit" [attr.x]="plotLeft - 8" [attr.y]="plotTop - 14">TWh</text>
+
+        <line
+          class="expansion__axis"
+          [attr.x1]="plotLeft" [attr.x2]="plotRight"
+          [attr.y1]="plotBottom" [attr.y2]="plotBottom"
+        />
+
+        @for (column of columns(); track column.year) {
+          <g
+            class="expansion__column"
+            [class.expansion__column--partial]="column.partial"
+            [class.expansion__column--dim]="cursor() !== null && cursor() !== $index"
+          >
+            @for (segment of column.segments; track segment.name) {
+              <path
+                class="expansion__segment"
+                [class]="'expansion__segment--' + segment.slot"
+                [attr.d]="segment.path"
+              />
+            }
+          </g>
+
+          <text
+            class="expansion__tick"
+            [attr.x]="column.x + column.width / 2"
+            [attr.y]="plotBottom + 18"
+          >{{ column.year }}{{ column.partial ? '*' : '' }}</text>
+        }
+
+        <!-- nur erste und letzte Saeule beschriftet: die Spanne ist die Aussage -->
+        @for (column of labelled(); track column.year) {
+          <text
+            class="expansion__cap"
+            [attr.x]="column.x + column.width / 2"
+            [attr.y]="plotTop - 14"
+            [attr.dx]="0"
+          >{{ column.total | number: '1.0-0' }}</text>
+        }
+      </svg>
+
+      @if (readout(); as info) {
+        <div
+          class="expansion__tooltip"
+          role="status"
+          [style.left.px]="info.column.x + info.column.width / 2"
+          [class.expansion__tooltip--flip]="info.column.x > width() * 0.6"
+        >
+          <p class="expansion__tooltip-time">
+            {{ info.column.year }}{{ info.column.partial ? ' (unvollständig)' : '' }}
+          </p>
+          <p class="expansion__tooltip-row expansion__tooltip-row--total">
+            <span class="expansion__tooltip-value">{{ info.column.total | number: '1.0-1' }} TWh</span>
+            <span class="expansion__tooltip-name">gesamt</span>
+          </p>
+          @for (row of info.rows; track row.name) {
+            <p class="expansion__tooltip-row">
+              <span class="expansion__key" [class]="'expansion__key--' + row.slot"></span>
+              <span class="expansion__tooltip-value">{{ row.value | number: '1.0-1' }}</span>
+              <span class="expansion__tooltip-name">{{ row.name }}</span>
+            </p>
+          }
+        </div>
+      }
+    } @else {
+      <p class="expansion__empty">Jahresdaten werden geladen …</p>
+    }
+  </div>
+
+  @if (hasData()) {
+    <ul class="expansion__legend">
+      @for (series of data().series; track series.name) {
+        <li class="expansion__legend-item">
+          <span class="expansion__key" [class]="'expansion__key--' + series.slot"></span>
+          <span>{{ series.name }}</span>
+        </li>
+      }
+    </ul>
+
+    @if (partialNote(); as note) {
+      <p class="expansion__note">
+        * {{ note }} ist noch nicht vollständig und daher nicht mit den übrigen Jahren vergleichbar.
+      </p>
+    }
+
+    <!-- Zweitansicht: dieselben Werte ohne Farbe und ohne Zeigen -->
+    <div class="expansion__scroller">
+      <table class="expansion__table">
+        <caption>Jahresenergie in TWh</caption>
+        <thead>
+          <tr>
+            <th scope="col">Technologie</th>
+            @for (year of years(); track year) {
+              <th scope="col" class="expansion__num">{{ year }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (series of data().series; track series.name) {
+            <tr>
+              <th scope="row">{{ series.name }}</th>
+              @for (value of series.twh; track $index) {
+                <td class="expansion__num">{{ value | number: '1.0-1' }}</td>
+              }
+            </tr>
+          }
+          <tr class="expansion__total-row">
+            <th scope="row">Gesamt</th>
+            @for (total of totals(); track $index) {
+              <td class="expansion__num">{{ total | number: '1.0-1' }}</td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -6,12 +6,13 @@ import { Wind } from './components/wind/wind-card/wind';
 import { Fossil } from './components/fossil/fossil-card/fossil';
 import { Mix } from './components/mix/mix-card/mix';
 import { Timeline } from './components/timeline/timeline';
+import { Expansion } from './components/expansion/expansion';
 import { Footer } from './components/footer/footer';
 import { Contact } from './components/contact/contact';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Solar, Wind, Fossil, Mix, Timeline, Header, Contact, Footer],
+  imports: [RouterOutlet, Solar, Wind, Fossil, Mix, Timeline, Expansion, Header, Contact, Footer],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

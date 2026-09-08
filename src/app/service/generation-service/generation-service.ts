@@ -47,6 +47,8 @@ export interface CapacityResponse {
 export interface CurrentPower {
   ts: string | null;
   values: Record<string, number>;
+  /** Zeitstempel je Reihe - die Quelle liefert sie unterschiedlich weit */
+  timestamps: Record<string, string>;
 }
 
 
@@ -68,6 +70,22 @@ export interface PowerMix {
   technologies: MixTechnology[];
 }
 
+
+
+export interface AnnualSeries {
+  name: string;
+  category: MixCategory;
+  slot: number | null;
+  /** Jahresenergie in Terawattstunden, Index passend zu Annual.years */
+  twh: number[];
+}
+
+export interface Annual {
+  years: number[];
+  /** Jahre mit unvollstaendiger Datenlage - nicht mit den uebrigen vergleichbar */
+  partialYears: number[];
+  series: AnnualSeries[];
+}
 
 export interface TimelineSeries {
   name: string;
@@ -99,9 +117,11 @@ const GROUP_LABEL: Record<MixGroup['id'], string> = {
 /** energy-charts publiziert im 15-Minuten-Raster */
 const REFRESH_MS = 15 * 60 * 1000;
 
-const EMPTY_POWER: CurrentPower = { ts: null, values: {} };
+const EMPTY_POWER: CurrentPower = { ts: null, values: {}, timestamps: {} };
 
 const EMPTY_CAPACITY: CapacityResponse = { maxPowerCapacity: {} };
+
+const EMPTY_ANNUAL: Annual = { years: [], partialYears: [], series: [] };
 
 const EMPTY_MIX: PowerMix = { ts: null, totalMw: 0, renewableSharePercent: null, technologies: [] };
 
@@ -179,6 +199,23 @@ export class GenerationService {
 
   private readonly capacity = toSignal(this.capacity$, { initialValue: EMPTY_CAPACITY });
 
+  /**
+   * Stand der Daten *dieses* Energietyps. Bewusst der aelteste beteiligte
+   * Zeitstempel: die Summe ist nur so aktuell wie ihre traegste Reihe.
+   * `updatedAt()` waere der neueste ueber alle Reihen und damit zu optimistisch.
+   */
+  updatedAtFor(type: EnergyType): string | null {
+    const { timestamps } = this.current();
+    const own = TECHNOLOGIES[type].map(tech => timestamps[tech]).filter(Boolean);
+    return own.length ? own.reduce((oldest, ts) => (ts < oldest ? ts : oldest)) : null;
+  }
+
+  /** Alter der Daten dieses Typs in Minuten */
+  ageMinutesFor(type: EnergyType): number | null {
+    const ts = this.updatedAtFor(type);
+    return ts ? Math.round((Date.now() - Date.parse(ts)) / 60000) : null;
+  }
+
   /** Installierte Leistung des Energietyps in MW (Quelle liefert GW) */
   capacityMw(type: EnergyType): number {
     const entries = this.capacity().maxPowerCapacity;
@@ -210,6 +247,14 @@ export class GenerationService {
     const slots = new Map(this.mix().technologies.map(tech => [tech.name, tech.slot]));
     return TECHNOLOGIES[type].filter(name => slots.get(name) != null);
   }
+
+  /** Jahresenergie - einmalig geladen, die Reihe aendert sich taeglich hoechstens einmal */
+  private readonly annual$ = this.http.get<Annual>('/api/annual').pipe(
+    catchError(() => EMPTY),
+    shareReplay({ bufferSize: 1, refCount: false })
+  );
+
+  readonly annual = toSignal(this.annual$, { initialValue: EMPTY_ANNUAL });
 
   timeline(hours: number, technologies: string[]): Observable<Timeline> {
     return this.http.get<Timeline>('/api/timeline', {

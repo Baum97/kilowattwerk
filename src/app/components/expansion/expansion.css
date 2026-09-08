@@ -1,0 +1,255 @@
+/*
+ * Farben wie im Verlaufsgraphen - dieselbe Technologie traegt dieselbe Farbe,
+ * damit die Zuordnung ueber beide Graphen hinweg gilt. Die fuenf hier
+ * verwendeten Slots wurden in *Stapelreihenfolge* validiert (die Nachbarn im
+ * Stapel sind die kritischen Paare), gegen #f9faf3 hell und #121410 dunkel:
+ * alle Checks bestanden.
+ */
+.expansion {
+  --series-1: light-dark(#2a78d6, #3987e5);
+  --series-2: light-dark(#eb6834, #d95926);
+  --series-3: light-dark(#1baf7a, #199e70);
+  --series-7: light-dark(#4a3aa7, #9085e9);
+  --series-8: light-dark(#e34948, #e66767);
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.expansion__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.expansion__title {
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+.expansion__subtitle {
+  margin: 0;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ---------- Graph ---------- */
+
+.expansion__plot {
+  position: relative;
+  width: 100%;
+}
+
+.expansion__svg {
+  display: block;
+  max-width: 100%;
+}
+
+.expansion__svg:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.expansion__grid,
+.expansion__axis {
+  stroke: var(--mat-sys-outline-variant);
+  stroke-width: 1;
+}
+
+.expansion__tick,
+.expansion__unit {
+  fill: var(--mat-sys-on-surface-variant);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-anchor: middle;
+}
+
+.expansion__tick--y,
+.expansion__unit {
+  text-anchor: end;
+}
+
+/* Direktbeschriftung traegt Textfarbe, nicht die Serienfarbe */
+.expansion__cap {
+  fill: var(--mat-sys-on-surface);
+  font-size: 12px;
+  font-weight: 500;
+  text-anchor: middle;
+}
+
+.expansion__column {
+  transition: opacity 120ms ease;
+}
+
+/* Nicht betrachtete Saeulen treten zurueck, statt die aktive zu faerben */
+.expansion__column--dim {
+  opacity: 0.45;
+}
+
+/* Unvollstaendiges Jahr: abgesetzt, damit es nicht als Einbruch gelesen wird */
+.expansion__column--partial {
+  opacity: 0.55;
+}
+
+.expansion__column--partial.expansion__column--dim {
+  opacity: 0.3;
+}
+
+.expansion__segment--1 { fill: var(--series-1); }
+.expansion__segment--2 { fill: var(--series-2); }
+.expansion__segment--3 { fill: var(--series-3); }
+.expansion__segment--7 { fill: var(--series-7); }
+.expansion__segment--8 { fill: var(--series-8); }
+
+/* ---------- Tooltip ---------- */
+
+.expansion__tooltip {
+  position: absolute;
+  top: 8px;
+  transform: translateX(12px);
+  min-width: 170px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--mat-sys-inverse-surface);
+  color: var(--mat-sys-inverse-on-surface);
+  box-shadow: var(--mat-sys-level2);
+  pointer-events: none;
+}
+
+.expansion__tooltip--flip {
+  transform: translateX(calc(-100% - 12px));
+}
+
+.expansion__tooltip-time {
+  margin: 0 0 4px;
+  font: var(--mat-sys-label-small);
+  opacity: 0.75;
+}
+
+.expansion__tooltip-row {
+  display: grid;
+  grid-template-columns: 10px auto 1fr;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+
+.expansion__tooltip-row--total {
+  grid-template-columns: auto 1fr;
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid currentColor;
+}
+
+/* Wert fuehrt, Bezeichnung folgt */
+.expansion__tooltip-value {
+  font: var(--mat-sys-label-large);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.expansion__tooltip-name {
+  font: var(--mat-sys-label-small);
+  opacity: 0.75;
+}
+
+/* ---------- Legende ---------- */
+
+.expansion__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.expansion__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+/* Flaechen tragen ein Rechteck als Kennung, keine Linie */
+.expansion__key {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.expansion__key--1 { background: var(--series-1); }
+.expansion__key--2 { background: var(--series-2); }
+.expansion__key--3 { background: var(--series-3); }
+.expansion__key--7 { background: var(--series-7); }
+.expansion__key--8 { background: var(--series-8); }
+
+.expansion__note {
+  margin: 0;
+  font: var(--mat-sys-label-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ---------- Zweitansicht ---------- */
+
+/* Zwoelf Jahresspalten passen auf schmalen Schirmen nicht - eigener Scroller,
+   damit die Seite selbst nicht seitlich rutscht */
+.expansion__scroller {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.expansion__table {
+  border-collapse: collapse;
+  font: var(--mat-sys-body-small);
+}
+
+.expansion__table caption {
+  text-align: left;
+  padding-bottom: 6px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-small);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.expansion__table th,
+.expansion__table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  font-weight: 400;
+  color: var(--mat-sys-on-surface);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.expansion__table thead th {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.expansion__total-row th,
+.expansion__total-row td {
+  font-weight: 500;
+  border-top: 1px solid var(--mat-sys-outline);
+}
+
+.expansion__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.expansion__empty {
+  margin: 24px 0;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expansion__column { transition: none; }
+}

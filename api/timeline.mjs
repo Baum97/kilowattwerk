@@ -8,6 +8,16 @@ import { CATEGORY, CHARTABLE, CHART_SLOT, NOT_GENERATION } from '../lib/technolo
 
 const DEFAULT_HOURS = 24;
 const MAX_HOURS = 72;
+
+/** 15-Minuten-Raster */
+const POINTS_PER_HOUR = 4;
+
+/**
+ * Zusatzfenster gegen den Verzug der Quelle. energy-charts faellt zeitweise um
+ * mehr als 20 Stunden zurueck; ohne Puffer lieferte eine 24-Stunden-Anfrage
+ * dann nur eine Handvoll Punkte am Anfang des Zeitraums.
+ */
+const LAG_BUFFER_HOURS = 24;
 const REFRESH_SECONDS = 15 * 60;
 
 export default async function handler(req, res) {
@@ -22,7 +32,7 @@ export default async function handler(req, res) {
     .filter(Boolean);
 
   const end = new Date();
-  const start = new Date(end.getTime() - hours * 60 * 60 * 1000);
+  const start = new Date(end.getTime() - (hours + LAG_BUFFER_HOURS) * 60 * 60 * 1000);
 
   const url = new URL('https://api.energy-charts.info/public_power');
   url.searchParams.set('country', 'de');
@@ -48,10 +58,13 @@ export default async function handler(req, res) {
     }))
     .sort((a, b) => (a.slot ?? 99) - (b.slot ?? 99));
 
-  // Punkte, an denen ueberhaupt eine gewaehlte Reihe Werte hat. Die Reihen
-  // laufen unterschiedlich weit; ohne Beschnitt endet der Graph in einer
+  // Fenster am letzten vorhandenen Messwert ausrichten, nicht an "jetzt".
+  // Die Reihen laufen unterschiedlich weit, und die Quelle kann Stunden
+  // zurueckliegen - ohne diese Verschiebung endete der Graph in einer
   // Lueckenzone, die wie ein Einbruch aussieht.
   let last = -1;
+  let firstWithData = -1;
+
   for (const s of series) {
     for (let i = s.values.length - 1; i >= 0; i--) {
       if (s.values[i] != null) {
@@ -59,9 +72,18 @@ export default async function handler(req, res) {
         break;
       }
     }
+    for (let i = 0; i < s.values.length; i++) {
+      if (s.values[i] != null) {
+        if (firstWithData < 0 || i < firstWithData) firstWithData = i;
+        break;
+      }
+    }
   }
 
-  const count = last + 1;
+  // die letzten `hours` Stunden *vorhandener* Daten, nicht der Uhr
+  const windowPoints = hours * POINTS_PER_HOUR;
+  const from = last < 0 ? 0 : Math.max(Math.max(firstWithData, 0), last - windowPoints + 1);
+  const to = last + 1;
 
   res.setHeader(
     'Cache-Control',
@@ -70,8 +92,8 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     hours,
-    timestamps: unix_seconds.slice(0, count).map(sec => new Date(sec * 1000).toISOString()),
-    series: series.map(s => ({ ...s, values: s.values.slice(0, count) })),
+    timestamps: unix_seconds.slice(from, to).map(sec => new Date(sec * 1000).toISOString()),
+    series: series.map(s => ({ ...s, values: s.values.slice(from, to) })),
   });
 }
 

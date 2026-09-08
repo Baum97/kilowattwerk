@@ -292,7 +292,9 @@ function niceMax(value: number): number {
   if (value <= 0) return 1000;
 
   const magnitude = 10 ** Math.floor(Math.log10(value));
-  for (const factor of [1, 2, 2.5, 5, 10]) {
+  // 1,5 / 3 / 4 mit drin, sonst springt die Achse z. B. von 250 auf 500
+  // und die Marken fuellen nur die halbe Hoehe
+  for (const factor of [1, 1.5, 2, 2.5, 3, 4, 5, 10]) {
     const candidate = factor * magnitude;
     if (candidate >= value) return candidate;
   }
