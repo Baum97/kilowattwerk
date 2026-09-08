@@ -11,11 +11,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { CATEGORY, CHART_SLOT } from '../lib/technologies.mjs';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
 /** Erneuerbare mit fester Farbzuordnung - die Reihen, die den Ausbau tragen */
 const SERIES = [
   'Solar',
@@ -34,6 +29,22 @@ const FULL_YEAR_DAYS = 360;
 const CACHE_SECONDS = 24 * 60 * 60;
 
 export default async function handler(req, res) {
+  // createClient bewusst *im* Handler: auf Modulebene wirft es bei fehlender
+  // Variable schon beim Import ("supabaseUrl is required") - der Aufrufer sieht
+  // dann einen nackten 500 ohne Hinweis, was fehlt.
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !key) {
+    console.error('annual: Konfiguration unvollstaendig', { hasUrl: Boolean(url), hasKey: Boolean(key) });
+    return res.status(500).json({
+      error: 'Supabase ist nicht konfiguriert.',
+      missing: [!url && 'SUPABASE_URL', !key && 'SUPABASE_SERVICE_ROLE_KEY'].filter(Boolean),
+    });
+  }
+
+  const supabase = createClient(url, key);
+
   const totals = new Map();   // technology -> year -> MWh
   const dayCount = new Map(); // year -> Set<day>
 
